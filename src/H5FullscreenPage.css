@@ -7,6 +7,10 @@
     overflow: hidden;
     position: relative;
 }
+.H5FullscreenPage .item:not(:first-child ) {
+    transform: translate3d(0,100%,0);
+    -webkit-transform: translate3d(0,100%,0);
+}
 .H5FullscreenPage .item {
     position: absolute;
     top: 0;
@@ -20,10 +24,7 @@
     -webkit-transition: all 300ms ease-in-out;*/
     background-position: center;
 }
-.H5FullscreenPage .item:not(:first-child ) {
-    transform: translate3d(0,100%,0);
-    -webkit-transform: translate3d(0,100%,0);
-}
+
 
 .H5FullscreenPage .no-animation {
     transition: none;

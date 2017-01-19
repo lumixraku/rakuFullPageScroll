@@ -22,7 +22,6 @@
         init: function(option) {
             var that = this;
             $.extend(opt, option);
-            this.$containerElem = $(opt.container);
 
             initDom(opt);
             initEvent(opt);
@@ -138,8 +137,7 @@
             var currentItem;
 
             function initDom(opt) {
-                that.pageCount = that.$containerElem.children().length;
-                this.scrollInScreen = false;
+                that.pageCount = $(opt.container).children().length;
                 // $('body').addClass('H5FullscreenPage');
                 currentItem = $('.item').first();
                 currentItem.attr('state', 'next');
@@ -177,21 +175,6 @@
                 item.addClass('no-animation');
                 item.next().addClass('no-animation');
                 item.prev().addClass('no-animation');
-
-                var scrolledTop = document.body.scrollTop;
-                var offsetBody = getElementTop(that.$containerElem[0]);
-                console.log(scrolledTop, offsetBody);
-
-                that.scrollInScreen = scrolledTop === offsetBody;
-                function getElementTop(element){
-            　　　　var actualTop = element.offsetTop;
-            　　　　var current = element.offsetParent;
-            　　　　while (current !== null){
-            　　　　　　actualTop += current.offsetTop;
-            　　　　　　current = current.offsetParent;
-            　　　　}
-            　　　　return actualTop;
-            　　}
 
             }
 
@@ -248,13 +231,8 @@
                     // var translateY = -(0.4*percentage);
                     // $(event.target).css('-webkit-transform', 'translateY('+translateY*100+'%)');//当前item下移动
                     // $(event.target).prev().css('-webkit-transform', 'scale('+scale+')');//前一个item放大
-
-                    //只有在scroll完全在屏幕中之后 再次向下滑动才使用fullPage事件  否则为默认事件
-                    // ...
-                    if(that.scrollInScreen){
-                        obj[opt.type].downDrag(percentage, item);
-                        event.preventDefault();
-                    }
+                    obj[opt.type].downDrag(percentage, item);
+                    event.preventDefault();
 
                 }
 
