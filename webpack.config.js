@@ -12,6 +12,7 @@ module.exports = {
     // entry: ['babel-polyfill','./bt.js'],
     entry: {
         H5FullscreenPage: ['./src/H5FullscreenPage.js'],
+        bdcH5FullscreenPage: ['./bdcsimple_src/H5FullscreenPage.js']
     },
     output: {
         path: path.join(__dirname, 'dist'),
@@ -20,16 +21,16 @@ module.exports = {
     },
     module: {
         loaders: [
-
             {
                 test: /\.css$/,
                 loader: ExtractTextPlugin.extract("style-loader", "css-loader")
             }
-
         ]
     },
     plugins: [
         new ExtractTextPlugin("H5FullscreenPage.css"),
         new ExtractTextPlugin("page-animation.css"),
+        new ExtractTextPlugin("simpleH5FullscreenPage.css"),
+        new ExtractTextPlugin("simple_page-animation.css"),        
     ]
 };

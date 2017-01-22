@@ -44,33 +44,39 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1);
+	module.exports = __webpack_require__(11);
 
 
 /***/ },
-/* 1 */
+/* 1 */,
+/* 2 */,
+/* 3 */,
+/* 4 */,
+/* 5 */,
+/* 6 */,
+/* 7 */,
+/* 8 */,
+/* 9 */,
+/* 10 */,
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//如果css和js打包在一起  加载的时候动画存在问题 //估计是加载顺序导致
 	//必须分开  故使用了ExtractTextPlugin
-	__webpack_require__(2);
-	__webpack_require__(6);
-	__webpack_require__(8);
-	__webpack_require__(9);
-	var animateObj = __webpack_require__(10);
+	__webpack_require__(12);
+	__webpack_require__(14);
+	__webpack_require__(16);
+	__webpack_require__(17);
+	var animateObj = __webpack_require__(18);
 
 	var opt = {
-	    'container': '.H5FullscreenPage-wrap',
-	    'type': 1,
-	    'pageShow': function() {},
-	    'pageHide': function() {},
-	    'useShakeDevice': {
-	        'speed': 30,
-	        'callback': function() {}
-	    },
-	    'useParallax': true,
-	    'useArrow': true,
-	    'useAnimation': true,
+	    container: '.H5FullscreenPage-wrap',
+	    animateType:'Linear',
+	    pageShow: function() {},
+	    pageHide: function() {},
+	    useParallax: true,
+	    useArrow: true,
+	    // 'useAnimation': true,
 	    // 'useMusic' : {
 	    //     'autoPlay' : true,
 	    //     'loopPlay' : true,
@@ -94,7 +100,10 @@
 	    return actualTop;　　
 	}
 
-	window.H5FullscreenPage = function() {};
+	window.H5FullscreenPage = function(option) {
+	    this.option = option;
+	    this.init(option);
+	};
 	window.H5FullscreenPage.prototype = {
 
 	    init: function(option) {
@@ -113,12 +122,7 @@
 	        // $('body').addClass('H5FullscreenPage');
 	        currentItem = this.$item.first();
 	        currentItem.attr('state', 'next');
-	        if (opt.useAnimation) {
-	            var items = this.$item;
-	            items.find('.part').addClass('hide');
-	            that.orderPart(items.first());
-	        }
-	        $('body').append('<div class="overlay"></div>');
+	        // $('body').append('<div class="overlay"></div>');
 	        if (opt.useArrow) {
 	            this.$item.slice(0, this.$item.length - 1).append('<span class="arrow"></span>');
 	        }
@@ -148,7 +152,7 @@
 	        if (dragStart !== null) return;
 	        var item = $(event.target).closest('.item');
 	        if (!item.length) {
-	            $('.overlay').hide();
+	            // $('.overlay').hide();
 	            return;
 	        }
 	        if (event.touches) {
@@ -176,7 +180,7 @@
 	        var item = $(event.target).closest('.item');
 	        if (dragStart === null) return;
 	        if (!item.length) {
-	            $('.overlay').hide();
+	            // $('.overlay').hide();
 	            return;
 	        }
 
@@ -187,52 +191,51 @@
 	        }
 	        //得到抓取开始时于进行中的差值的百分比
 	        percentage = (dragStart - ev0.clientY) / window.screen.height; //
-	        var offset = that.getOffset();
-	        var scrolled = that.getScrolled();
-	        if (!that.scrollInScreen) {
-	            //非全屏  scroll组件没有完全进入
-	            if(percentage > 0 && (offset > scrolled)){
-	                event.preventDefault(); //swipeup
-	            }
-	            if(percentage < 0 && offset < scrolled){
-	                event.preventDefault();
-	            }
-	            return;//touchMove 要屏蔽才能触发swipeUp
-	        }
-
-
-	        //percentage > 0 向上滑动
-	        if (percentage > 0) {
-	            if (item.index() + 1 !== that.pageCount) {
-	                var scale = 1 - 0.5 * percentage; //缩放系数，可以微调
-	                animateObj[opt.type].upDrag(percentage, item);
-	                event.preventDefault();
-
-	            } else {
-	                //最后一个slide  向上滑动时 采用默认事件
-	            }
-
-	        } else if (item.prev()) {
-	            if(item.index() !== 0  ){
-	                animateObj[opt.type].downDrag(percentage, item);
-	                event.preventDefault();
-
-	            }else{
-	                //第一个向 下拖动  默认
-
-	            }
-	        }
+	        // var offset = that.getOffset();
+	        // var scrolled = that.getScrolled();
+	        // if (!that.scrollInScreen) {
+	        //     //非全屏  scroll组件没有完全进入
+	        //     if(percentage > 0 && (offset > scrolled)){
+	        //         event.preventDefault(); //swipeup
+	        //     }
+	        //     if(percentage < 0 && offset < scrolled){
+	        //         event.preventDefault();
+	        //     }
+	        //     return;//touchMove 要屏蔽才能触发swipeUp
+	        // }
+	        //
+	        //
+	        // //percentage > 0 向上滑动
+	        // if (percentage > 0) {
+	        //     if (item.index() + 1 !== that.pageCount) {
+	        //         var scale = 1 - 0.5 * percentage; //缩放系数，可以微调
+	        //         animateObj[opt.type].upDrag(percentage, item);
+	        //         event.preventDefault();
+	        //
+	        //     } else {
+	        //         //最后一个slide  向上滑动时 采用默认事件
+	        //     }
+	        //
+	        // } else if (item.prev()) {
+	        //     if(item.index() !== 0  ){
+	        //         animateObj[opt.type].downDrag(percentage, item);
+	        //         event.preventDefault();
+	        //
+	        //     }else{
+	        //         //第一个向 下拖动  默认
+	        //
+	        //     }
+	        // }
 	    },
-
 	    touchEnd: function(event) {
 	        var that = this;
 	        console.log('touch end');
 	        //防止多次滚动，故增加一个覆盖层
-	        $('.overlay').show();
+	        // $('.overlay').show();
 	        dragStart = null;
 	        var item = $(event.target).closest('.item');
 	        if (!item.length) {
-	            $('.overlay').hide();
+	            // $('.overlay').hide();
 	            return;
 	        }
 	        item.removeClass('no-animation');
@@ -240,16 +243,30 @@
 	        item.prev().removeClass('no-animation');
 
 	        //抓取停止后，根据临界值做相应判断
-
-	        if (that.scrollInScreen) {
-	            if (percentage >= dragThreshold) {
-	                that.nextSlide(item);
-	            } else if (Math.abs(percentage) >= dragThreshold) {
-	                that.prevSlide(item);
-	            } else {
-	                that.showSlide(item);
+	        var offsetToBody = that.getOffset();
+	        var scrolled = that.getScrolled();
+	        if(Math.abs(percentage) >= dragThreshold){
+	            if(offsetToBody < scrolled  && percentage > 0){
+	                that.moveoutslide_up();
+	            }
+	            if(offsetToBody > scrolled && percentage > 0){
+	                that.moveintoslide();
+	            }
+	            if(offsetToBody < scrolled && percentage < 0){
+	                that.moveintoslide();
+	            }
+	            if(offsetToBody > scrolled && percentage < 0){
+	                that.moveoutslide_down();
+	            }
+	            if(offsetToBody === scrolled && percentage > 0){
+	                that.moveoutslide_up();
+	            }
+	            if(offsetToBody === scrolled && percentage < 0){
+	                that.moveoutslide_down();
 	            }
 	        }
+
+
 	        //重置percentage
 	        percentage = 0;
 
@@ -266,7 +283,7 @@
 	        var scrolled = that.getScrolled();
 
 	        if(!that.scrollInScreen){
-	            Math.animation(scrolled,offsetToBody, Math.abs(scrolled - offsetToBody), 'Linear', function(value, end){
+	            Math.animation(scrolled,offsetToBody, Math.abs(scrolled - offsetToBody), that.animateType, function(value, end){
 	                window.scrollTo(0, value);
 	            });
 	        }else{
@@ -274,7 +291,7 @@
 	            //最后一个向上滑  底部吸顶
 	            if(item.index()+1 === that.pageCount){
 	                var containerHeight = that.$containerElem.height();
-	                Math.animation(scrolled, scrolled+containerHeight, containerHeight, 'Linear', function(value, end){
+	                Math.animation(scrolled, scrolled+containerHeight, containerHeight, that.animateType, function(value, end){
 	                    window.scrollTo(0, value);
 	                });
 	            }
@@ -290,7 +307,7 @@
 	        var offsetToBody = getElementTop(that.$containerElem[0]);
 	        var scrolled = that.getScrolled();
 	        if(item.index() !== 0){
-	            Math.animation(scrolled,offsetToBody, Math.abs(scrolled - offsetToBody), 'Linear', function(value, end){
+	            Math.animation(scrolled,offsetToBody, Math.abs(scrolled - offsetToBody), that.animateType, function(value, end){
 	                window.scrollTo(0, value);
 	            });
 
@@ -299,58 +316,46 @@
 	            var scrollTo = 0;
 	            scrollTo = offsetToBody - that.$containerElem.height();
 	            if(scrollTo < 0) scrollTo = 0;
-	            Math.animation(scrolled,scrollTo, Math.abs(scrolled - scrollTo), 'Linear', function(value, end){
+	            Math.animation(scrolled,scrollTo, Math.abs(scrolled - scrollTo), that.animateType, function(value, end){
 	                window.scrollTo(0, value);
 	            });
 	        }
 	    },
 
-	    nextSlide: function(item) {
+	    moveoutslide_up: function(item) {
 	        var that = this;
-	        if (item.next().length) {
-	            item.attr('state', 'prev');
-	            item.siblings('.item').removeAttr('state');
+	        var scrollTo = 0;
+	        var scrolled = that.getScrolled();
+	        var offsetToBody = getElementTop(that.$containerElem[0]);
 
-	            currentItem = item.next();
-	            currentItem.attr('state', 'next');
-
-	            that.orderPart(item.next());
-	            animateObj[opt.type].nextSlide(item);
-	        } else {
-	            animateObj[opt.type].showSlide(item);
-	        }
-
-	    },
-
-	    prevSlide: function(item) {
-	        if (item.prev().length) {
-
-	            item.attr('state', 'prev');
-	            item.siblings('.item').removeAttr('state');
-	            currentItem = item.prev();
-	            currentItem.attr('state', 'next');
-	            animateObj[opt.type].prevSlide(item);
-	        } else {
-	            animateObj[opt.type].showSlide(item);
-	        }
-
-	    },
-
-	    showSlide: function(item) {
-	        //$(event.target).removeClass('parallax-item');
-	        animateObj[opt.type].showSlide(item);
-	    },
-
-	    orderPart: function(dom) {
-	        var parts = $(dom).find('.part');
-	        parts.forEach(function(item) {
-	            var time = $(item).attr('data-delay') || 100;
-	            setTimeout(function() {
-	                $(item).removeClass('hide');
-	            }, time);
+	        scrollTo = offsetToBody + that.$containerElem.height();
+	        Math.animation(scrolled,scrollTo, Math.abs(scrolled - scrollTo), that.animateType, function(value, end){
+	            window.scrollTo(0, value);
 	        });
 	    },
+	    moveintoslide: function(){
+	        var that = this;
+	        var scrollTo = 0;
+	        var scrolled = that.getScrolled();
+	        var offsetToBody = getElementTop(that.$containerElem[0]);
 
+	        scrollTo = offsetToBody;
+	        Math.animation(scrolled,scrollTo, Math.abs(scrolled - scrollTo), that.animateType, function(value, end){
+	            window.scrollTo(0, value);
+	        });
+	    },
+	    moveoutslide_down: function(){
+	        var that = this;
+	        var scrollTo = 0;
+	        var scrolled = that.getScrolled();
+	        var offsetToBody = getElementTop(that.$containerElem[0]);
+
+	        scrollTo = offsetToBody - that.$containerElem.height();
+	        if(scrollTo < 0) scrollTo = 0;
+	        Math.animation(scrolled,scrollTo, Math.abs(scrolled - scrollTo), that.animateType, function(value, end){
+	            window.scrollTo(0, value);
+	        });
+	    },
 	    initEvent: function(opt) {
 	        var that = this;
 	        if (opt.useParallax) {
@@ -401,28 +406,7 @@
 
 	            }, false);
 	        }
-	        if (opt.useShakeDevice && opt.useShakeDevice.speed) {
-	            var x = y = z = lastX = lastY = lastZ = 0;
-	            if (window.DeviceMotionEvent) {
-	                window.addEventListener('devicemotion', function(eventData) {
-	                    var acceleration = event.accelerationIncludingGravity;
-	                    x = acceleration.x;
-	                    y = acceleration.y;
-	                    z = acceleration.z;
-	                    if (Math.abs(x - lastX) > opt.useShakeDevicespeed || Math.abs(y - lastY) > opt.useShakeDevicespeed || Math.abs(z - lastZ) > opt.useShakeDevicespeed) {
-	                        //shake
-	                        if (opt.useShakeDevice.callback) {
-	                            opt.useShakeDevice.callback(currentItem);
-	                        }
 
-
-	                    }
-	                    lastX = x;
-	                    lastY = y;
-	                    lastZ = z;
-	                }, false);
-	            }
-	        }
 	        // 绑定事件
 	        $(opt.container).on('touchmove', function(e) {
 	            e.preventDefault();
@@ -433,51 +417,27 @@
 	            'touchmove': that.touchMove.bind(that),
 	            'touchend': that.touchEnd.bind(that),
 	            'touchcancel': that.touchEnd.bind(that),
-	            'swipeUp': that.swipeUp.bind(that),
-	            'swipeDown': that.swipeDown.bind(that)
-	        });
-
-	        this.$item.on('tap', function() {
-	            //覆盖层隐藏
-	            $('.overlay').hide();
-	        });
-	        $('.overlay').on('tap', function() {
-	            //覆盖层隐藏
-	            $('.overlay').hide();
-	        });
-
-	        this.$item.on('transitionend webkitTransitionEnd', function(event) {
-	            //覆盖层隐藏
-	            $('.overlay').hide();
-	            //console.log($(event.target).attr('state'));
-	            if ($(event.target).attr('state') == 'next') {
-	                opt.pageShow(event.target);
-	            } else {
-	                opt.pageHide(event.target);
-	            }
 	        });
 	    }
 	};
 
 
 /***/ },
-/* 2 */
+/* 12 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */
+/* 13 */,
+/* 14 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 7 */,
-/* 8 */
+/* 15 */,
+/* 16 */
 /***/ function(module, exports) {
 
 	/*
@@ -660,7 +620,7 @@
 
 
 /***/ },
-/* 9 */
+/* 17 */
 /***/ function(module, exports) {
 
 	Math.animation = function (from, to, duration, easing, callback) {
@@ -776,7 +736,7 @@
 
 
 /***/ },
-/* 10 */
+/* 18 */
 /***/ function(module, exports) {
 
 	module.exports = {

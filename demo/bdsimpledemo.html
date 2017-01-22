@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html class=" js-no-overflow-scrolling">
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="cache-control"
+            content="max-age=0" />
+        <meta http-equiv="cache-control"
+            content="no-cache" />
+        <meta name="viewport"
+            content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <title>test1</title>
+        <link rel="stylesheet"
+            type="text/css"
+            href="../dist/simpleH5FullscreenPage.css">
+        <link rel="stylesheet"
+            type="text/css"
+            href="../dist/simple_page-animation.css">
+        <style type="text/css">
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    font-family: arial;
+    text-align: center;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+    list-style: none;
+}
+
+.H5FullscreenPage .item {
+    position: relative;
+}
+
+.item2 {
+    background-color: #0067A6;
+}
+
+.item1 {
+    background-color: #00ABD8;
+}
+
+.item3 {
+    background-color: #008972;
+}
+
+.item4 {
+    background-color: #F5C564;
+}
+
+.item5 {
+    background-color: #F2572D;
+}
+
+.item6 {
+    background-color: #ff67A6;
+}
+
+.others {
+    height: 200px;
+    background-color: yellow;
+}
+        </style>
+    </head>
+
+    <body>
+        <div class="others">
+            这里只是一个图片
+        </div>
+        <div class="others">
+            这里只是一个图片
+        </div>
+        <!-- <div class="others">
+            这里只是一个图片
+        </div>
+        <div class="others">
+            这里只是一个图片
+        </div> -->
+        <div id="fullpage1"
+            class="H5FullscreenPage-wrap">
+            <div class="item item1">
+                <h2>page1</h2>
+            </div>
+        </div>
+
+        <div id="fullpage2"
+            class="H5FullscreenPage-wrap">
+            <div class="item item1">
+                <h2>page2</h2>
+            </div>
+        </div>
+
+        <div id="fullpage3"
+            class="H5FullscreenPage-wrap">
+            <div class="item item1">
+                <h2>page3</h2>
+            </div>
+        </div>
+        <div class="others">
+            这里只是一个图片
+        </div>
+        <div class="others">
+            这里只是一个图片
+        </div>
+        <div class="others">
+            这里只是一个图片
+        </div>
+        <div class="others">
+            这里只是一个图片
+        </div>
+        <div class="others">
+            这里只是一个图片
+        </div>
+
+
+        <script src="zepto.min.js"></script>
+        <script type="text/javascript"
+            src="../dist/bdcH5FullscreenPage.js"></script>
+        <script type="text/javascript">
+new H5FullscreenPage({
+    animateType: 'easeOutCirc',
+    container: '#fullpage1'
+});
+new H5FullscreenPage({
+    animateType: 'easeOutCirc',
+    container: '#fullpage2'
+});
+new H5FullscreenPage({
+    animateType: 'easeOutCirc',
+    container: '#fullpage3'
+});
+
+
+$("html, body").css({
+    height: $(window).height()
+});
+        </script>
+    </body>
+
+</html>

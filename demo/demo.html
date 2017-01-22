@@ -209,16 +209,18 @@ ul {
         <div class="others">
             这里只是一个图片
         </div>
-        <div class="others">
+        <!-- <div class="others">
             这里只是一个图片
         </div>
-
+        <div class="others">
+            这里只是一个图片
+        </div> -->
         <div class="H5FullscreenPage">
             <div class="H5FullscreenPage-wrap">
                 <div class="item item1">
                     <h2>page1</h2>
                 </div>
-                <!-- <div class="item item2">
+                <div class="item item2">
                     <h2>page2</h2>
                 </div>
                 <div class="item item3">
@@ -229,7 +231,7 @@ ul {
                 </div>
                 <div class="item item5">
                     <h2>page5</h2>
-                </div> -->
+                </div>
                 <div class="item item6">
                     <h2>page6</h2>
                 </div>
@@ -252,14 +254,6 @@ ul {
         </div>
 
 
-
-
-
-
-
-
-
-
         <script src="zepto.min.js"></script>
         <script type="text/javascript"
             src="../dist/H5FullscreenPage.js"></script>
@@ -276,6 +270,11 @@ ul {
 // $('.others').on('touchmove', function(){
 // console.log('mmmm')
 // });
+
+$("html, body").css({
+    height: $(window).height()
+});
+
         </script>
     </body>
 
