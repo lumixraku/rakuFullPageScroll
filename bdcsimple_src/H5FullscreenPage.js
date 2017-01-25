@@ -1,10 +1,10 @@
 //如果css和js打包在一起  加载的时候动画存在问题 //估计是加载顺序导致
 //必须分开  故使用了ExtractTextPlugin
 require('./simpleH5FullscreenPage.css');
-require('./simple_page-animation.css');
+// require('./simple_page-animation.css');
 require('./tween/tween.js');
 require('./tween/animation.js');
-var animateObj = require('./animateObj.js');
+// var animateObj = require('./animateObj.js');
 
 var opt = {
     container: '.H5FullscreenPage-wrap',
@@ -113,14 +113,14 @@ window.H5FullscreenPage.prototype = {
     },
 
     touchMove: function(event) {
+        console.log('touch move');
         var that = this;
         var item = $(event.target).closest('.item');
         if (dragStart === null) return;
-        if (!item.length) {
-            // $('.overlay').hide();
-            return;
-        }
-
+        // if (!item.length) {
+        //     // $('.overlay').hide();
+        //     return;
+        // }
 
         var ev0;
         if (event.touches) {
@@ -175,9 +175,9 @@ window.H5FullscreenPage.prototype = {
             // $('.overlay').hide();
             return;
         }
-        item.removeClass('no-animation');
-        item.next().removeClass('no-animation');
-        item.prev().removeClass('no-animation');
+        // item.removeClass('no-animation');
+        // item.next().removeClass('no-animation');
+        // item.prev().removeClass('no-animation');
 
         //抓取停止后，根据临界值做相应判断
         var offsetToBody = that.getOffset();
@@ -208,56 +208,56 @@ window.H5FullscreenPage.prototype = {
         percentage = 0;
 
     },
-    swipeUp: function(event) {
-        var that = this;
-
-        console.log('swipeUp', that.scrollInScreen);
-        var item = $(event.target).closest('.item');
-        if (!item.length) {
-            return;
-        }
-        var offsetToBody = getElementTop(that.$containerElem[0]);
-        var scrolled = that.getScrolled();
-
-        if(!that.scrollInScreen){
-            Math.animation(scrolled,offsetToBody, Math.abs(scrolled - offsetToBody), that.animateType, function(value, end){
-                window.scrollTo(0, value);
-            });
-        }else{
-
-            //最后一个向上滑  底部吸顶
-            if(item.index()+1 === that.pageCount){
-                var containerHeight = that.$containerElem.height();
-                Math.animation(scrolled, scrolled+containerHeight, containerHeight, that.animateType, function(value, end){
-                    window.scrollTo(0, value);
-                });
-            }
-        }
-    },
-
-    swipeDown: function(event) {
-        var that = this;
-        var item = $(event.target).closest('.item');
-        if (!item.length) {
-            return;
-        }
-        var offsetToBody = getElementTop(that.$containerElem[0]);
-        var scrolled = that.getScrolled();
-        if(item.index() !== 0){
-            Math.animation(scrolled,offsetToBody, Math.abs(scrolled - offsetToBody), that.animateType, function(value, end){
-                window.scrollTo(0, value);
-            });
-
-        }else{
-            //第一张图下滑  单页组件向下缩起来
-            var scrollTo = 0;
-            scrollTo = offsetToBody - that.$containerElem.height();
-            if(scrollTo < 0) scrollTo = 0;
-            Math.animation(scrolled,scrollTo, Math.abs(scrolled - scrollTo), that.animateType, function(value, end){
-                window.scrollTo(0, value);
-            });
-        }
-    },
+    // swipeUp: function(event) {
+    //     var that = this;
+    //
+    //     console.log('swipeUp', that.scrollInScreen);
+    //     var item = $(event.target).closest('.item');
+    //     if (!item.length) {
+    //         return;
+    //     }
+    //     var offsetToBody = getElementTop(that.$containerElem[0]);
+    //     var scrolled = that.getScrolled();
+    //
+    //     if(!that.scrollInScreen){
+    //         Math.animation(scrolled,offsetToBody, Math.abs(scrolled - offsetToBody), that.animateType, function(value, end){
+    //             window.scrollTo(0, value);
+    //         });
+    //     }else{
+    //
+    //         //最后一个向上滑  底部吸顶
+    //         if(item.index()+1 === that.pageCount){
+    //             var containerHeight = that.$containerElem.height();
+    //             Math.animation(scrolled, scrolled+containerHeight, containerHeight, that.animateType, function(value, end){
+    //                 window.scrollTo(0, value);
+    //             });
+    //         }
+    //     }
+    // },
+    //
+    // swipeDown: function(event) {
+    //     var that = this;
+    //     var item = $(event.target).closest('.item');
+    //     if (!item.length) {
+    //         return;
+    //     }
+    //     var offsetToBody = getElementTop(that.$containerElem[0]);
+    //     var scrolled = that.getScrolled();
+    //     if(item.index() !== 0){
+    //         Math.animation(scrolled,offsetToBody, Math.abs(scrolled - offsetToBody), that.animateType, function(value, end){
+    //             window.scrollTo(0, value);
+    //         });
+    //
+    //     }else{
+    //         //第一张图下滑  单页组件向下缩起来
+    //         var scrollTo = 0;
+    //         scrollTo = offsetToBody - that.$containerElem.height();
+    //         if(scrollTo < 0) scrollTo = 0;
+    //         Math.animation(scrolled,scrollTo, Math.abs(scrolled - scrollTo), that.animateType, function(value, end){
+    //             window.scrollTo(0, value);
+    //         });
+    //     }
+    // },
 
     moveoutslide_up: function(item) {
         var that = this;

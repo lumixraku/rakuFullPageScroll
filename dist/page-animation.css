@@ -1,14 +1,17 @@
-.H5FullscreenPage-wrap {
+.H5FullscreenPage {
+    height: 100%;
+}
+.H5FullscreenPage .H5FullscreenPage-wrap {
     width: 100%;
     height: 100%;
     overflow: hidden;
     position: relative;
 }
-.item:not(:first-child ) {
+.H5FullscreenPage .item:not(:first-child ) {
     transform: translate3d(0,100%,0);
     -webkit-transform: translate3d(0,100%,0);
 }
-.item {
+.H5FullscreenPage .item {
     position: absolute;
     top: 0;
     left: 0;
@@ -23,14 +26,14 @@
 }
 
 
-.no-animation {
+.H5FullscreenPage .no-animation {
     transition: none;
     -webkit-transition: none;
 }
-.hide {
+.H5FullscreenPage .hide {
     display: none;
 }
-.overlay {
+.H5FullscreenPage .overlay {
     display: none;
     position: absolute;
     top: 0;
@@ -39,10 +42,10 @@
     right: 0;
     z-index: 99;
 }
-.zindex {
+.H5FullscreenPage .zindex {
     z-index: 99;
 }
-.arrow {
+.H5FullscreenPage .arrow {
     display: block;
     width: 25px;
     height: 25px;
@@ -57,17 +60,17 @@
     animation: fadeInUp 1.5s .2s ease infinite;
     -webkit-animation: fadeInUp 1.5s .2s infinite;
 }
-.parallax.part {
+.H5FullscreenPage .parallax.part {
     transition: all .5s;
     transition-timing-function: ease-out;
 }
-.parallax-item {
+.H5FullscreenPage .parallax-item {
     transition-property: background-position, transform;
     transition-timing-function: ease-out;
     transition-duration: 500ms;
 
 }
-.music {
+.H5FullscreenPage .music {
     position: absolute;
     right: 10px;
     top: 10px;
@@ -78,7 +81,7 @@
     background-size: 25px;
     z-index: 99;
 }
-.music.play {
+.H5FullscreenPage .music.play {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAA3CAMAAACfBSJ0AAAAilBMVEUAAAD////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////2N2iNAAAALXRSTlMA6y3h5gVsDgg2snYaPe/UFqtTKPK4r4Z9ZUxFMAP3WpokE97NiyzOv2mjksf96K+aAAACWUlEQVRIx52W6a6CMBCFp9pi2cq+L4LiLu//ejdgIkJL4XJ+GGnypfQM0zkg0smNHAu1bYss7eKeYJUMvfG12M1tAsTO3VjzG91YpNQQVSYZLRGzQqEqpbzgnFDgRZNz4M1SNMIPAmKRB47ozGZWaMO87NASbpkhBeRSUMYvHrEJSzLxkceusKzrFMywB2u0G79qjVRYJxPVPwVoElgrpRnKETkgEc2iNx4ew+hbODxbN2LG9xI/lfanjl8rAnHhClUPfOQ8aoDDDwdKAL3UPREYp2iMacqu+z/hyP5jYsht5zrID3S1AAABB0rY9xujU27/GrcSTUccZV0/6hVw3G7qzIiDSgeAxhRzgzNJfRhzZgNgo0LM9c6EH2cmXIFO4GrAc+5jcEbAgeZCFAu48h4Pzgi4+AJOKuDy7lfCpRpYOwG3W+CuFiB7A2dgKMkG7uBDCxs4aLfut3w+kmdZyp1v0c8EsfP5zPvppFLuiDJx/aJYyu3Tme/FDWVczYqZ79MY90NaOY5TfjkPfXzwuX6A22//PfFF13X25QhTe3Pu4/67df3+GhYU6zQ5n24ZAOpkEL307h3QcL9Y6dSX4lXe334ywigy+vvs8V0pT3zd6+RoT656bXp/4h6gpfj+Hu7P6X1dPfszveWTJeDmg72v8mvk5zLMxh4/j4wnKwMxxs8joLd/zL8b3TJvVVRvnO9b8oSHj1vyi8pjAOmKvJTO5DNDQhmONeMBvSBlNg8q6EJhTrkkf+byo2tMkHeZpq7J16zL18YBij5fs5skX/N5Hvutj2fz/B/LOymzX/xZaQAAAABJRU5ErkJggg==');
     -webkit-animation: rotate 3.82s linear infinite;
     animation: rotate 3.82s linear infinite;

@@ -65,7 +65,7 @@ window.H5FullscreenPage.prototype = {
             items.find('.part').addClass('hide');
             that.orderPart(items.first());
         }
-        $('body').append('<div class="overlay"></div>');
+        // $('body').append('<div class="overlay"></div>');
         if (opt.useArrow) {
             this.$item.slice(0, this.$item.length - 1).append('<span class="arrow"></span>');
         }
@@ -90,7 +90,9 @@ window.H5FullscreenPage.prototype = {
     getScrolled: function(){
          return document.body.scrollTop;
     },
+
     touchStart: function(event) {
+        console.log('start');
         var that = this;
         if (dragStart !== null) return;
         var item = $(event.target).closest('.item');
@@ -117,8 +119,8 @@ window.H5FullscreenPage.prototype = {
 
 
     },
-
     touchMove: function(event) {
+        console.log('touchMove');
         var that = this;
         var item = $(event.target).closest('.item');
         if (dragStart === null) return;
@@ -170,10 +172,9 @@ window.H5FullscreenPage.prototype = {
             }
         }
     },
-
     touchEnd: function(event) {
-        var that = this;
         console.log('touch end');
+        var that = this;
         //防止多次滚动，故增加一个覆盖层
         $('.overlay').show();
         dragStart = null;
@@ -201,6 +202,8 @@ window.H5FullscreenPage.prototype = {
         percentage = 0;
 
     },
+
+
     swipeUp: function(event) {
         var that = this;
 
@@ -268,7 +271,6 @@ window.H5FullscreenPage.prototype = {
         }
 
     },
-
     prevSlide: function(item) {
         if (item.prev().length) {
 
@@ -300,76 +302,7 @@ window.H5FullscreenPage.prototype = {
 
     initEvent: function(opt) {
         var that = this;
-        if (opt.useParallax) {
 
-            var orginData = {
-                x: 0,
-                y: 0
-            };
-            window.addEventListener('deviceorientation', function(event) {
-                var gamma = event.gamma;
-                var beta = event.beta;
-
-                var x = -gamma;
-                var y = -beta;
-
-                if (Math.abs(Math.abs(x) - Math.abs(orginData.x)) < 0.1 || Math.abs(Math.abs(y) - Math.abs(orginData.y)) < 0.1) {
-                    orginData.x = x;
-                    orginData.y = y;
-                    return;
-                } else {
-                    orginData.x = x;
-                    orginData.y = y;
-                }
-
-                var halfWidth = window.innerWidth / 2;
-                var halfHeight = window.innerHeight / 2;
-
-
-                var max = 5;
-                var items = $('.parallax');
-                items.forEach(function(item) {
-                    var dx = (item.getBoundingClientRect().width / max) * (x / halfWidth);
-                    var dy = (item.getBoundingClientRect().width / max) * (y / halfHeight);
-
-                    if ($(item).hasClass('item')) {
-                        //$(item).addClass('parallax-item');
-                        dx = -dx / 1 + 50;
-                        dy = -dy / 1 + 50;
-                        item.style['background-position'] = '' + dx + '% ' + dy + '%';
-                        //$(item).removeClass('parallax-item');
-                    } else {
-                        item.style.transform = item.style['-webkit-transform'] = 'translate3d(' + dx + 'px,' + dy + 'px,0)';
-                    }
-
-
-                });
-
-
-            }, false);
-        }
-        if (opt.useShakeDevice && opt.useShakeDevice.speed) {
-            var x = y = z = lastX = lastY = lastZ = 0;
-            if (window.DeviceMotionEvent) {
-                window.addEventListener('devicemotion', function(eventData) {
-                    var acceleration = event.accelerationIncludingGravity;
-                    x = acceleration.x;
-                    y = acceleration.y;
-                    z = acceleration.z;
-                    if (Math.abs(x - lastX) > opt.useShakeDevicespeed || Math.abs(y - lastY) > opt.useShakeDevicespeed || Math.abs(z - lastZ) > opt.useShakeDevicespeed) {
-                        //shake
-                        if (opt.useShakeDevice.callback) {
-                            opt.useShakeDevice.callback(currentItem);
-                        }
-
-
-                    }
-                    lastX = x;
-                    lastY = y;
-                    lastZ = z;
-                }, false);
-            }
-        }
         // 绑定事件
         $(opt.container).on('touchmove', function(e) {
             e.preventDefault();
@@ -396,6 +329,7 @@ window.H5FullscreenPage.prototype = {
         this.$item.on('transitionend webkitTransitionEnd', function(event) {
             //覆盖层隐藏
             $('.overlay').hide();
+            console.log('transitionend overlay hide');
             //console.log($(event.target).attr('state'));
             if ($(event.target).attr('state') == 'next') {
                 opt.pageShow(event.target);

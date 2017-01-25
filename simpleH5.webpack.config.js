@@ -4,14 +4,12 @@ var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
-    // entry: ['babel-polyfill','./bt.js'],
     entry: {
-        H5FullscreenPage: ['./src/H5FullscreenPage.js'],
-        // bdcH5FullscreenPage: ['./bdcsimple_src/H5FullscreenPage.js']
+        // H5FullscreenPage: ['./src/H5FullscreenPage.js'],
+        bdcH5FullscreenPage: ['./bdcsimple_src/H5FullscreenPage.js']
     },
     output: {
         path: path.join(__dirname, 'dist'),
-        // publicPath: "./local_web/",
         filename: '[name].js'
     },
     module: {
@@ -23,8 +21,8 @@ module.exports = {
         ]
     },
     plugins: [
-        new ExtractTextPlugin("H5FullscreenPage.css"),
-        new ExtractTextPlugin("page-animation.css"),
+        new ExtractTextPlugin("simpleH5FullscreenPage.css"),
+        new ExtractTextPlugin("simple_page-animation.css"),
         // new webpack.optimize.UglifyJsPlugin({
         //   compress: {
         //     warnings: false

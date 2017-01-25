@@ -64,10 +64,10 @@
 	//如果css和js打包在一起  加载的时候动画存在问题 //估计是加载顺序导致
 	//必须分开  故使用了ExtractTextPlugin
 	__webpack_require__(12);
+	// require('./simple_page-animation.css');
 	__webpack_require__(14);
-	__webpack_require__(16);
-	__webpack_require__(17);
-	var animateObj = __webpack_require__(18);
+	__webpack_require__(15);
+	// var animateObj = require('./animateObj.js');
 
 	var opt = {
 	    container: '.H5FullscreenPage-wrap',
@@ -176,14 +176,14 @@
 	    },
 
 	    touchMove: function(event) {
+	        console.log('touch move');
 	        var that = this;
 	        var item = $(event.target).closest('.item');
 	        if (dragStart === null) return;
-	        if (!item.length) {
-	            // $('.overlay').hide();
-	            return;
-	        }
-
+	        // if (!item.length) {
+	        //     // $('.overlay').hide();
+	        //     return;
+	        // }
 
 	        var ev0;
 	        if (event.touches) {
@@ -238,9 +238,9 @@
 	            // $('.overlay').hide();
 	            return;
 	        }
-	        item.removeClass('no-animation');
-	        item.next().removeClass('no-animation');
-	        item.prev().removeClass('no-animation');
+	        // item.removeClass('no-animation');
+	        // item.next().removeClass('no-animation');
+	        // item.prev().removeClass('no-animation');
 
 	        //抓取停止后，根据临界值做相应判断
 	        var offsetToBody = that.getOffset();
@@ -271,56 +271,56 @@
 	        percentage = 0;
 
 	    },
-	    swipeUp: function(event) {
-	        var that = this;
-
-	        console.log('swipeUp', that.scrollInScreen);
-	        var item = $(event.target).closest('.item');
-	        if (!item.length) {
-	            return;
-	        }
-	        var offsetToBody = getElementTop(that.$containerElem[0]);
-	        var scrolled = that.getScrolled();
-
-	        if(!that.scrollInScreen){
-	            Math.animation(scrolled,offsetToBody, Math.abs(scrolled - offsetToBody), that.animateType, function(value, end){
-	                window.scrollTo(0, value);
-	            });
-	        }else{
-
-	            //最后一个向上滑  底部吸顶
-	            if(item.index()+1 === that.pageCount){
-	                var containerHeight = that.$containerElem.height();
-	                Math.animation(scrolled, scrolled+containerHeight, containerHeight, that.animateType, function(value, end){
-	                    window.scrollTo(0, value);
-	                });
-	            }
-	        }
-	    },
-
-	    swipeDown: function(event) {
-	        var that = this;
-	        var item = $(event.target).closest('.item');
-	        if (!item.length) {
-	            return;
-	        }
-	        var offsetToBody = getElementTop(that.$containerElem[0]);
-	        var scrolled = that.getScrolled();
-	        if(item.index() !== 0){
-	            Math.animation(scrolled,offsetToBody, Math.abs(scrolled - offsetToBody), that.animateType, function(value, end){
-	                window.scrollTo(0, value);
-	            });
-
-	        }else{
-	            //第一张图下滑  单页组件向下缩起来
-	            var scrollTo = 0;
-	            scrollTo = offsetToBody - that.$containerElem.height();
-	            if(scrollTo < 0) scrollTo = 0;
-	            Math.animation(scrolled,scrollTo, Math.abs(scrolled - scrollTo), that.animateType, function(value, end){
-	                window.scrollTo(0, value);
-	            });
-	        }
-	    },
+	    // swipeUp: function(event) {
+	    //     var that = this;
+	    //
+	    //     console.log('swipeUp', that.scrollInScreen);
+	    //     var item = $(event.target).closest('.item');
+	    //     if (!item.length) {
+	    //         return;
+	    //     }
+	    //     var offsetToBody = getElementTop(that.$containerElem[0]);
+	    //     var scrolled = that.getScrolled();
+	    //
+	    //     if(!that.scrollInScreen){
+	    //         Math.animation(scrolled,offsetToBody, Math.abs(scrolled - offsetToBody), that.animateType, function(value, end){
+	    //             window.scrollTo(0, value);
+	    //         });
+	    //     }else{
+	    //
+	    //         //最后一个向上滑  底部吸顶
+	    //         if(item.index()+1 === that.pageCount){
+	    //             var containerHeight = that.$containerElem.height();
+	    //             Math.animation(scrolled, scrolled+containerHeight, containerHeight, that.animateType, function(value, end){
+	    //                 window.scrollTo(0, value);
+	    //             });
+	    //         }
+	    //     }
+	    // },
+	    //
+	    // swipeDown: function(event) {
+	    //     var that = this;
+	    //     var item = $(event.target).closest('.item');
+	    //     if (!item.length) {
+	    //         return;
+	    //     }
+	    //     var offsetToBody = getElementTop(that.$containerElem[0]);
+	    //     var scrolled = that.getScrolled();
+	    //     if(item.index() !== 0){
+	    //         Math.animation(scrolled,offsetToBody, Math.abs(scrolled - offsetToBody), that.animateType, function(value, end){
+	    //             window.scrollTo(0, value);
+	    //         });
+	    //
+	    //     }else{
+	    //         //第一张图下滑  单页组件向下缩起来
+	    //         var scrollTo = 0;
+	    //         scrollTo = offsetToBody - that.$containerElem.height();
+	    //         if(scrollTo < 0) scrollTo = 0;
+	    //         Math.animation(scrolled,scrollTo, Math.abs(scrolled - scrollTo), that.animateType, function(value, end){
+	    //             window.scrollTo(0, value);
+	    //         });
+	    //     }
+	    // },
 
 	    moveoutslide_up: function(item) {
 	        var that = this;
@@ -431,13 +431,6 @@
 /***/ },
 /* 13 */,
 /* 14 */
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
-/***/ },
-/* 15 */,
-/* 16 */
 /***/ function(module, exports) {
 
 	/*
@@ -620,7 +613,7 @@
 
 
 /***/ },
-/* 17 */
+/* 15 */
 /***/ function(module, exports) {
 
 	Math.animation = function (from, to, duration, easing, callback) {
@@ -732,121 +725,6 @@
 	    };
 	    // 开始执行动画
 	    step();
-	};
-
-
-/***/ },
-/* 18 */
-/***/ function(module, exports) {
-
-	module.exports = {
-	    '1': {
-	        'upDrag': function(percentage, item) {
-	            var translateY = 1 - 0.7 * percentage; //位置系数，可以微调
-	            item.next().css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //下一个item上移动
-	        },
-	        'downDrag': function(percentage, item) {
-
-	            var translateY = -(0.7 * percentage);
-	            item.prev().css('-webkit-transform', 'translate3d(0,' + (translateY * 100 - 100) + '%,0)');
-	            item.css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //当前item下移动
-	        },
-	        'nextSlide': function(item) {
-	            item.css('-webkit-transform', 'translate3d(0,-100%,0)');
-	            item.next().css('-webkit-transform', 'translate3d(0,0,0)');
-	        },
-	        'prevSlide': function(item) {
-	            item.prev().css('-webkit-transform', 'scale(1)');
-	            item.css('-webkit-transform', 'translate3d(0,100%,0)');
-	        },
-	        'showSlide': function(item) {
-	            item.css('-webkit-transform', 'scale(1)');
-	            item.next().css('-webkit-transform', 'translate3d(0,100%,0)');
-	        }
-	    },
-	    '2': {
-	        'upDrag': function(percentage, item) {
-	            var scale = 1 - 0.2 * percentage; //缩放系数，可以微调
-	            var translateY = 1 - 0.7 * percentage; //位置系数，可以微调
-	            item.css('-webkit-transform', 'scale(' + scale + ')'); //当前item缩小
-	            item.next().css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //下一个item上移动
-	        },
-	        'downDrag': function(percentage, item) {
-	            console.log('down drag');
-
-	            var scale = 0.8 - 0.2 * percentage;
-	            var translateY = -(0.7 * percentage);
-	            item.css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //当前item下移动
-	            item.prev().css('-webkit-transform', 'scale(' + scale + ')'); //前一个item放大
-	        },
-	        'nextSlide': function(item) {
-	            item.css('-webkit-transform', 'scale(.8)');
-	            item.next().css('-webkit-transform', 'translate3d(0,0,0)');
-	        },
-	        'prevSlide': function(item) {
-	            item.prev().css('-webkit-transform', 'scale(1)');
-	            item.css('-webkit-transform', 'translate3d(0,100%,0)');
-	        },
-	        'showSlide': function(item) {
-	            item.css('-webkit-transform', 'scale(1)');
-	            item.next().css('-webkit-transform', 'translate3d(0,100%,0)');
-	        }
-	    },
-	    '3': {
-	        'upDrag': function(percentage, item) {
-	            var translateY = 1 - 0.4 * percentage; //位置系数，可以微调
-	            item.css('-webkit-transform', 'translate3d(0,' + (translateY * 100 - 100) + '%,0)');
-	            item.next().css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //下一个item上移动
-	        },
-	        'downDrag': function(percentage, item) {
-	            var translateY = -(0.4 * percentage);
-	            item.prev().css('-webkit-transform', 'translate3d(0,' + (translateY * 100 - 100) + '%,0)');
-	            item.css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //当前item下移动
-	        },
-	        'nextSlide': function(item) {
-	            item.css('-webkit-transform', 'translate3d(0,-100%,0)');
-	            item.next().css('-webkit-transform', 'translate3d(0,0,0)');
-	        },
-	        'prevSlide': function(item) {
-	            item.prev().css('-webkit-transform', 'scale(1)');
-	            item.css('-webkit-transform', 'translate3d(0,100%,0)');
-	        },
-	        'showSlide': function(item) {
-	            item.css('-webkit-transform', 'scale(1)');
-	            item.next().css('-webkit-transform', 'translate3d(0,100%,0)');
-	        }
-	    },
-	    '4': {
-	        'upDrag': function(percentage, item) {
-	            var translateY = 1 - 0.4 * percentage; //位置系数，可以微调
-	            item.css('-webkit-transform', 'translate3d(0,' + (translateY * 100 - 100) + '%,0)');
-	            item.next().css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //下一个item上移动
-	        },
-	        'downDrag': function(percentage, item) {
-
-	            var translateY = -(0.4 * percentage);
-	            item.prev().css('-webkit-transform', 'translate3d(0,' + (translateY * 100 - 100) + '%,0)');
-	            item.css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //当前item下移动
-	        },
-	        'nextSlide': function(item) {
-	            item.addClass('zindex');
-	            setTimeout(function() {
-	                item.removeClass('no-animation').css('-webkit-transform', 'translate3d(0,-100%,0)');
-	                item.next().removeClass('zindex').addClass('no-animation').css('-webkit-transform', 'translate3d(0,0,0)');
-	            }, 100);
-
-	        },
-	        'prevSlide': function(item) {
-
-	            item.prev().css('-webkit-transform', 'translate3d(0,0,0)');
-	            item.next().css('-webkit-transform', 'translate3d(0,100%,0)');
-	            item.removeClass('zindex');
-	        },
-	        'showSlide': function(item) {
-	            item.css('-webkit-transform', 'scale(1)');
-	            item.next().css('-webkit-transform', 'translate3d(0,100%,0)');
-	        }
-	    }
 	};
 
 
