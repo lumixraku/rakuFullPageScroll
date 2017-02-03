@@ -22,9 +22,10 @@ var opt = {
 };
 
 
-var dragThreshold = 0.15; //临界值
+var dragThreshold = 0.09; //临界值
 var dragStart = null; //开始抓取标志位
 var percentage = 0; //拖动量的百分比
+var startScrolled = 0; // 开始时已经滚动距离
 var currentItem;
 
 function getElementTop(element) {　　　　
@@ -36,6 +37,16 @@ function getElementTop(element) {　　　　
     }　　　　
     return actualTop;　　
 }
+
+$(window).scroll(function(){
+    document.webkitExitFullscreen && document.webkitExitFullscreen();
+    document.exitFullscreen && document.exitFullscreen();
+});
+$(window).on('resize', function(e){
+    // console.log(e, $(window).height());
+    $(document.body).height($(window).height());
+});
+
 
 window.H5FullscreenPage = function(option) {
     this.option = option;
@@ -97,6 +108,7 @@ window.H5FullscreenPage.prototype = {
         }
         //抓取时的所在位置
         dragStart = event.clientY;
+        startScrolled = this.getScrolled();
 
         //分别关闭item的动画效果,动画效果只在松开抓取时出现
         item.addClass('no-animation');
@@ -127,7 +139,13 @@ window.H5FullscreenPage.prototype = {
             ev0 = event.touches[0];
         }
         //得到抓取开始时于进行中的差值的百分比
-        percentage = (dragStart - ev0.clientY) / window.screen.height; //
+        percentage = (dragStart - ev0.clientY) / window.screen.height;
+
+        if(percentage > 0){
+            window.scrollTo(0, startScrolled + Math.abs(dragStart - ev0.clientY));
+        }else{
+            window.scrollTo(0, startScrolled - Math.abs(dragStart - ev0.clientY));
+        }
         // var offset = that.getOffset();
         // var scrolled = that.getScrolled();
         // if (!that.scrollInScreen) {
@@ -201,6 +219,8 @@ window.H5FullscreenPage.prototype = {
             if(offsetToBody === scrolled && percentage < 0){
                 that.moveoutslide_down();
             }
+        }else{
+            console.log('scrolled too little to trigger next step');
         }
 
 

@@ -216,7 +216,46 @@ ul {
             这里只是一个图片
         </div> -->
         <div class="H5FullscreenPage">
-            <div class="H5FullscreenPage-wrap">
+            <div id="demo1"
+                class="H5FullscreenPage-wrap">
+                <div class="item item1">
+                    <h2>page1</h2>
+                </div>
+                <div class="item item2">
+                    <h2>page2</h2>
+                </div>
+                <div class="item item3">
+                    <h2>page3</h2>
+                </div>
+                <div class="item item4">
+                    <h2>page4</h2>
+                </div>
+                <div class="item item5">
+                    <h2>page5</h2>
+                </div>
+                <div class="item item6">
+                    <h2>page6</h2>
+                </div>
+            </div>
+        </div>
+        <div class="others">
+            这里只是一个图片
+        </div>
+        <div class="others">
+            这里只是一个图片
+        </div>
+        <div class="others">
+            这里只是一个图片
+        </div>
+        <div class="others">
+            这里只是一个图片
+        </div>
+        <div class="others">
+            这里只是一个图片
+        </div>
+        <div class="H5FullscreenPage">
+            <div id="demo2"
+                class="H5FullscreenPage-wrap">
                 <div class="item item1">
                     <h2>page1</h2>
                 </div>
@@ -253,28 +292,23 @@ ul {
             这里只是一个图片
         </div>
 
-
         <script src="zepto.min.js"></script>
         <script type="text/javascript"
             src="../dist/H5FullscreenPage.js"></script>
         <script type="text/javascript">
-(new H5FullscreenPage()).init({
-    'type': 2,
-    'pageShow': function(dom) {
-
-    },
-    'pageHide': function(dom) {
-        //console.log(dom);
-    }
+new H5FullscreenPage({
+    container: '#demo1',
+    type: 2,
 });
-// $('.others').on('touchmove', function(){
-// console.log('mmmm')
-// });
+
+new H5FullscreenPage({
+    container: '#demo2',
+    type: 2,
+});
 
 $("html, body").css({
     height: $(window).height()
 });
-
         </script>
     </body>
 

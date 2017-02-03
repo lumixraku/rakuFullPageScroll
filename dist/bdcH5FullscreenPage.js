@@ -44,29 +44,19 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(11);
+	module.exports = __webpack_require__(1);
 
 
 /***/ },
-/* 1 */,
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */
+/* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//如果css和js打包在一起  加载的时候动画存在问题 //估计是加载顺序导致
 	//必须分开  故使用了ExtractTextPlugin
-	__webpack_require__(12);
+	__webpack_require__(2);
 	// require('./simple_page-animation.css');
-	__webpack_require__(14);
-	__webpack_require__(15);
+	__webpack_require__(6);
+	__webpack_require__(7);
 	// var animateObj = require('./animateObj.js');
 
 	var opt = {
@@ -85,9 +75,10 @@
 	};
 
 
-	var dragThreshold = 0.15; //临界值
+	var dragThreshold = 0.09; //临界值
 	var dragStart = null; //开始抓取标志位
 	var percentage = 0; //拖动量的百分比
+	var startScrolled = 0; // 开始时已经滚动距离
 	var currentItem;
 
 	function getElementTop(element) {　　　　
@@ -99,6 +90,16 @@
 	    }　　　　
 	    return actualTop;　　
 	}
+
+	$(window).scroll(function(){
+	    document.webkitExitFullscreen && document.webkitExitFullscreen();
+	    document.exitFullscreen && document.exitFullscreen();
+	});
+	$(window).on('resize', function(e){
+	    // console.log(e, $(window).height());
+	    $(document.body).height($(window).height());
+	});
+
 
 	window.H5FullscreenPage = function(option) {
 	    this.option = option;
@@ -160,6 +161,7 @@
 	        }
 	        //抓取时的所在位置
 	        dragStart = event.clientY;
+	        startScrolled = this.getScrolled();
 
 	        //分别关闭item的动画效果,动画效果只在松开抓取时出现
 	        item.addClass('no-animation');
@@ -190,7 +192,13 @@
 	            ev0 = event.touches[0];
 	        }
 	        //得到抓取开始时于进行中的差值的百分比
-	        percentage = (dragStart - ev0.clientY) / window.screen.height; //
+	        percentage = (dragStart - ev0.clientY) / window.screen.height;
+
+	        if(percentage > 0){
+	            window.scrollTo(0, startScrolled + Math.abs(dragStart - ev0.clientY));
+	        }else{
+	            window.scrollTo(0, startScrolled - Math.abs(dragStart - ev0.clientY));
+	        }
 	        // var offset = that.getOffset();
 	        // var scrolled = that.getScrolled();
 	        // if (!that.scrollInScreen) {
@@ -264,6 +272,8 @@
 	            if(offsetToBody === scrolled && percentage < 0){
 	                that.moveoutslide_down();
 	            }
+	        }else{
+	            console.log('scrolled too little to trigger next step');
 	        }
 
 
@@ -423,14 +433,16 @@
 
 
 /***/ },
-/* 12 */
+/* 2 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 13 */,
-/* 14 */
+/* 3 */,
+/* 4 */,
+/* 5 */,
+/* 6 */
 /***/ function(module, exports) {
 
 	/*
@@ -613,7 +625,7 @@
 
 
 /***/ },
-/* 15 */
+/* 7 */
 /***/ function(module, exports) {
 
 	Math.animation = function (from, to, duration, easing, callback) {

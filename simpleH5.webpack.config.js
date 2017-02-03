@@ -5,8 +5,7 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
     entry: {
-        // H5FullscreenPage: ['./src/H5FullscreenPage.js'],
-        bdcH5FullscreenPage: ['./bdcsimple_src/H5FullscreenPage.js']
+        bdcH5FullscreenPage: ['./bdcsimple_src/simpleH5FullscreenPage.js']
     },
     output: {
         path: path.join(__dirname, 'dist'),
@@ -22,7 +21,7 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin("simpleH5FullscreenPage.css"),
-        new ExtractTextPlugin("simple_page-animation.css"),
+        // new ExtractTextPlugin("simple_page-animation.css"),
         // new webpack.optimize.UglifyJsPlugin({
         //   compress: {
         //     warnings: false

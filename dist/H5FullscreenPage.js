@@ -60,7 +60,7 @@
 	var animateObj = __webpack_require__(10);
 
 	var opt = {
-	    'container': '.H5FullscreenPage-wrap',
+	    'container': '',
 	    'type': 1,
 	    'pageShow': function() {},
 	    'pageHide': function() {},
@@ -94,14 +94,15 @@
 	    return actualTop;　　
 	}
 
-	window.H5FullscreenPage = function() {};
+	window.H5FullscreenPage = function(option) {
+	    $.extend(opt, option);
+	    this.$containerElem = $(opt.container);
+	    this.$item = this.$containerElem.children();
+	    this.init();
+	};
 	window.H5FullscreenPage.prototype = {
-
 	    init: function(option) {
-	        var that = this;
-	        $.extend(opt, option);
-	        this.$containerElem = $(opt.container);
-	        this.$item = this.$containerElem.children();
+	        // var that = this;
 	        this.initDom(opt);
 	        this.initEvent(opt);
 	    },
