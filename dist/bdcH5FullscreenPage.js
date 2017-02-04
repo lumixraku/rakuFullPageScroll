@@ -61,10 +61,10 @@
 
 	var opt = {
 	    container: '.H5FullscreenPage-wrap',
-	    animateType:'Linear',
+	    animateType: 'Linear',
 	    pageShow: function() {},
 	    pageHide: function() {},
-	    useParallax: true,
+	    // useParallax: true,
 	    useArrow: true,
 	    // 'useAnimation': true,
 	    // 'useMusic' : {
@@ -74,12 +74,16 @@
 	    // }
 	};
 
+	var $body = $(document.body);
 
-	var dragThreshold = 0.09; //临界值
+	var dragThreshold = 0.01; //临界值
 	var dragStart = null; //开始抓取标志位
 	var percentage = 0; //拖动量的百分比
 	var startScrolled = 0; // 开始时已经滚动距离
 	var currentItem;
+
+	var dragStartBody = null;
+
 
 	function getElementTop(element) {　　　　
 	    var actualTop = element.offsetTop;　　　　
@@ -90,13 +94,15 @@
 	    }　　　　
 	    return actualTop;　　
 	}
+	//
+	// $(window).scroll(function() {
+	//     document.webkitExitFullscreen && document.webkitExitFullscreen();
+	//     document.exitFullscreen && document.exitFullscreen();
+	// });
 
-	$(window).scroll(function(){
-	    document.webkitExitFullscreen && document.webkitExitFullscreen();
-	    document.exitFullscreen && document.exitFullscreen();
-	});
-	$(window).on('resize', function(e){
+	$(window).on('resize', function(e) {
 	    // console.log(e, $(window).height());
+	    console.log('resize');
 	    $(document.body).height($(window).height());
 	});
 
@@ -110,6 +116,7 @@
 	    init: function(option) {
 	        var that = this;
 	        $.extend(opt, option);
+	        this.animateType = opt.animateType;
 	        this.$containerElem = $(opt.container);
 	        this.$item = this.$containerElem.children();
 	        this.initDom(opt);
@@ -134,8 +141,8 @@
 	            $('body').append('<span class="music play"><audio id="audio" src=' + src + ' ' + autoplay + ' ' + loopPlay + '></audio></span>');
 	        }
 	    },
-	    getOffset: function(element){
-	        var that =this;
+	    getOffset: function(element) {
+	        var that = this;
 	        element = element || that.$containerElem[0];
 	        var actualTop = element.offsetTop;　　　　
 	        var current = element.offsetParent;　　　　
@@ -145,8 +152,8 @@
 	        }　　　　
 	        return actualTop;　　
 	    },
-	    getScrolled: function(){
-	         return document.body.scrollTop;
+	    getScrolled: function() {
+	        return document.body.scrollTop;
 	    },
 	    touchStart: function(event) {
 	        var that = this;
@@ -157,95 +164,78 @@
 	            return;
 	        }
 	        if (event.touches) {
-	            event = event.touches[0];
+	            ev0 = event.touches[0];
+	        }
+	        if (event.originalEvent.touches) {
+	            ev0 = event.originalEvent.touches[0];
 	        }
 	        //抓取时的所在位置
-	        dragStart = event.clientY;
+	        dragStart = ev0.clientY;
 	        startScrolled = this.getScrolled();
 
 	        //分别关闭item的动画效果,动画效果只在松开抓取时出现
-	        item.addClass('no-animation');
-	        item.next().addClass('no-animation');
-	        item.prev().addClass('no-animation');
+	        // item.addClass('no-animation');
+	        // item.next().addClass('no-animation');
+	        // item.prev().addClass('no-animation');
 
 	        var scrolledTop = document.body.scrollTop;
 	        var offsetBody = getElementTop(that.$containerElem[0]);
 
 	        that.scrollInScreen = scrolledTop === offsetBody;
+	        that.touchInRange = true; //表示进入到了指定的滑动区域  //单页组件以及单页组件附近
+
+
+
+
+	        that.touchInPage = true;
 	        console.log('scrollInScreen', that.scrollInScreen);
+
+	        event.stopPropagation();
 
 
 	    },
-
 	    touchMove: function(event) {
 	        console.log('touch move');
 	        var that = this;
-	        var item = $(event.target).closest('.item');
 	        if (dragStart === null) return;
-	        // if (!item.length) {
-	        //     // $('.overlay').hide();
-	        //     return;
-	        // }
 
+	        //body的touchmove事件也到这里
+	        if (!that.touchInRange) return;
+
+	        // event.preventDefault();
 	        var ev0;
 	        if (event.touches) {
 	            ev0 = event.touches[0];
 	        }
+	        if (event.originalEvent.touches) {
+	            ev0 = event.originalEvent.touches[0];
+	        }
+
 	        //得到抓取开始时于进行中的差值的百分比
 	        percentage = (dragStart - ev0.clientY) / window.screen.height;
+	        console.log('touch move in page ', percentage);
 
-	        if(percentage > 0){
+
+	        if (percentage > 0) {
 	            window.scrollTo(0, startScrolled + Math.abs(dragStart - ev0.clientY));
-	        }else{
+	        } else {
 	            window.scrollTo(0, startScrolled - Math.abs(dragStart - ev0.clientY));
 	        }
-	        // var offset = that.getOffset();
-	        // var scrolled = that.getScrolled();
-	        // if (!that.scrollInScreen) {
-	        //     //非全屏  scroll组件没有完全进入
-	        //     if(percentage > 0 && (offset > scrolled)){
-	        //         event.preventDefault(); //swipeup
-	        //     }
-	        //     if(percentage < 0 && offset < scrolled){
-	        //         event.preventDefault();
-	        //     }
-	        //     return;//touchMove 要屏蔽才能触发swipeUp
-	        // }
-	        //
-	        //
-	        // //percentage > 0 向上滑动
-	        // if (percentage > 0) {
-	        //     if (item.index() + 1 !== that.pageCount) {
-	        //         var scale = 1 - 0.5 * percentage; //缩放系数，可以微调
-	        //         animateObj[opt.type].upDrag(percentage, item);
-	        //         event.preventDefault();
-	        //
-	        //     } else {
-	        //         //最后一个slide  向上滑动时 采用默认事件
-	        //     }
-	        //
-	        // } else if (item.prev()) {
-	        //     if(item.index() !== 0  ){
-	        //         animateObj[opt.type].downDrag(percentage, item);
-	        //         event.preventDefault();
-	        //
-	        //     }else{
-	        //         //第一个向 下拖动  默认
-	        //
-	        //     }
-	        // }
 	    },
 	    touchEnd: function(event) {
 	        var that = this;
-	        console.log('touch end');
 	        //防止多次滚动，故增加一个覆盖层
 	        // $('.overlay').show();
 	        dragStart = null;
-	        var item = $(event.target).closest('.item');
-	        if (!item.length) {
-	            // $('.overlay').hide();
-	            return;
-	        }
+	        dragStartBody = null;
+
+	        //在非单页组件上滑动了
+	        // var item = $(event.target).closest('.item');
+	        // if (!item.length) {
+	        //     return;
+	        // }
+
+
 	        // item.removeClass('no-animation');
 	        // item.next().removeClass('no-animation');
 	        // item.prev().removeClass('no-animation');
@@ -253,170 +243,146 @@
 	        //抓取停止后，根据临界值做相应判断
 	        var offsetToBody = that.getOffset();
 	        var scrolled = that.getScrolled();
-	        if(Math.abs(percentage) >= dragThreshold){
-	            if(offsetToBody < scrolled  && percentage > 0){
+	        console.log('touchend percentage', percentage);
+
+	        if (that.touchInRange) {
+	            // console.log('touchend in range');
+
+	        } else {
+	            return;
+	        }
+	        if (Math.abs(percentage) >= dragThreshold) {
+	            if (offsetToBody < scrolled && percentage > 0) {
 	                that.moveoutslide_up();
 	            }
-	            if(offsetToBody > scrolled && percentage > 0){
+	            if (offsetToBody > scrolled && percentage > 0) {
 	                that.moveintoslide();
 	            }
-	            if(offsetToBody < scrolled && percentage < 0){
+	            if (offsetToBody < scrolled && percentage < 0) {
 	                that.moveintoslide();
 	            }
-	            if(offsetToBody > scrolled && percentage < 0){
+	            if (offsetToBody > scrolled && percentage < 0) {
 	                that.moveoutslide_down();
 	            }
-	            if(offsetToBody === scrolled && percentage > 0){
+	            if (offsetToBody === scrolled && percentage > 0) {
 	                that.moveoutslide_up();
 	            }
-	            if(offsetToBody === scrolled && percentage < 0){
+	            if (offsetToBody === scrolled && percentage < 0) {
 	                that.moveoutslide_down();
 	            }
-	        }else{
+	        } else {
 	            console.log('scrolled too little to trigger next step');
 	        }
 
 
 	        //重置percentage
 	        percentage = 0;
+	        that.touchInRange = null;
+	        that.touchInPage = null;
+	        console.log('touch end');
+
 
 	    },
-	    // swipeUp: function(event) {
-	    //     var that = this;
-	    //
-	    //     console.log('swipeUp', that.scrollInScreen);
-	    //     var item = $(event.target).closest('.item');
-	    //     if (!item.length) {
-	    //         return;
-	    //     }
-	    //     var offsetToBody = getElementTop(that.$containerElem[0]);
-	    //     var scrolled = that.getScrolled();
-	    //
-	    //     if(!that.scrollInScreen){
-	    //         Math.animation(scrolled,offsetToBody, Math.abs(scrolled - offsetToBody), that.animateType, function(value, end){
-	    //             window.scrollTo(0, value);
-	    //         });
-	    //     }else{
-	    //
-	    //         //最后一个向上滑  底部吸顶
-	    //         if(item.index()+1 === that.pageCount){
-	    //             var containerHeight = that.$containerElem.height();
-	    //             Math.animation(scrolled, scrolled+containerHeight, containerHeight, that.animateType, function(value, end){
-	    //                 window.scrollTo(0, value);
-	    //             });
-	    //         }
-	    //     }
-	    // },
-	    //
-	    // swipeDown: function(event) {
-	    //     var that = this;
-	    //     var item = $(event.target).closest('.item');
-	    //     if (!item.length) {
-	    //         return;
-	    //     }
-	    //     var offsetToBody = getElementTop(that.$containerElem[0]);
-	    //     var scrolled = that.getScrolled();
-	    //     if(item.index() !== 0){
-	    //         Math.animation(scrolled,offsetToBody, Math.abs(scrolled - offsetToBody), that.animateType, function(value, end){
-	    //             window.scrollTo(0, value);
-	    //         });
-	    //
-	    //     }else{
-	    //         //第一张图下滑  单页组件向下缩起来
-	    //         var scrollTo = 0;
-	    //         scrollTo = offsetToBody - that.$containerElem.height();
-	    //         if(scrollTo < 0) scrollTo = 0;
-	    //         Math.animation(scrolled,scrollTo, Math.abs(scrolled - scrollTo), that.animateType, function(value, end){
-	    //             window.scrollTo(0, value);
-	    //         });
-	    //     }
-	    // },
-
 	    moveoutslide_up: function(item) {
+	        console.log('moveout slide up');
 	        var that = this;
 	        var scrollTo = 0;
 	        var scrolled = that.getScrolled();
+
+	        //that.$containerElem[0] 指的是当前被拖动的item  此时此item 顶部已有一部分被遮住
 	        var offsetToBody = getElementTop(that.$containerElem[0]);
 
 	        scrollTo = offsetToBody + that.$containerElem.height();
-	        Math.animation(scrolled,scrollTo, Math.abs(scrolled - scrollTo), that.animateType, function(value, end){
-	            window.scrollTo(0, value);
+	        Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * 1.5, that.animateType, function(value, end) {
+	            console.log(value.toFixed(3) + '...............');
+	            window.scrollTo(0, value.toFixed(3));
 	        });
-	    },
-	    moveintoslide: function(){
-	        var that = this;
-	        var scrollTo = 0;
-	        var scrolled = that.getScrolled();
-	        var offsetToBody = getElementTop(that.$containerElem[0]);
 
-	        scrollTo = offsetToBody;
-	        Math.animation(scrolled,scrollTo, Math.abs(scrolled - scrollTo), that.animateType, function(value, end){
-	            window.scrollTo(0, value);
-	        });
+	        //使用transform改变
+	        // var winHeight = window.screen.height;
+	        // var translateY = winHeight - (scrolled - offsetToBody);
+	        //
+	        // window.scrollTo(0, scrollTo);
+	        //
+	        // $body.css({
+	        //     transform: 'translateY(' +translateY+ 'px)'
+	        // });
+	        // Math.animation(translateY, 0, Math.abs(winHeight) * 1.5, that.animateType, function(value, end) {
+	        //     value = value.toFixed(3);
+	        //     console.log(value, '...............', end);
+	        //     $body.css({
+	        //         transform: 'translate3d(0, ' +value+ 'px, 0)'
+	        //     });
+	        //     if(end){
+	        //         $body.css({
+	        //             transform: ''
+	        //         });
+	        //     }
+	        // });
+
+	        console.log('move up end-------------', scrollTo);
+
 	    },
-	    moveoutslide_down: function(){
+	    moveintoslide: function() {
+	        console.log('moveinto slide');
+
+	        var that = this;
+	        var scrolled = that.getScrolled();
+	        var scrollTo = getElementTop(that.$containerElem[0]) || 0;
+	        Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * 2, that.animateType, function(value, end) {
+	            console.log(value.toFixed(3));
+	            window.scrollTo(0, value.toFixed(3));
+	        });
+	        console.log('move into end-------------', scrollTo);
+	    },
+	    moveoutslide_down: function() {
+	        console.log('moveout slide down');
+
+
 	        var that = this;
 	        var scrollTo = 0;
 	        var scrolled = that.getScrolled();
 	        var offsetToBody = getElementTop(that.$containerElem[0]);
 
 	        scrollTo = offsetToBody - that.$containerElem.height();
-	        if(scrollTo < 0) scrollTo = 0;
-	        Math.animation(scrolled,scrollTo, Math.abs(scrolled - scrollTo), that.animateType, function(value, end){
-	            window.scrollTo(0, value);
+	        if (scrollTo < 0) scrollTo = 0;
+	        Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * 2, that.animateType, function(value, end) {
+	            window.scrollTo(0, value.toFixed(3));
 	        });
 	    },
+	    touchStartBody: function(event) {
+	        var that = this;
+	        // if (dragStartBody !== null) return;
+	        if (event.touches) {
+	            ev0 = event.touches[0];
+	        }
+	        if (event.originalEvent.touches) {
+	            ev0 = event.originalEvent.touches[0];
+	        }
+	        //抓取时的所在位置
+	        dragStart = ev0.clientY;
+	        dragStartBody = ev0.pageY;
+	        var offsetToBody = that.getOffset();
+	        var offsetToBodyWithHeight = offsetToBody + that.$containerElem.height();
+	        var dragStartBodyThrehold = 150;
+
+	        //这样太麻烦
+	        if ((offsetToBody - dragStartBody) > 0 && Math.abs(offsetToBody - dragStartBody) < 150) {
+	            this.touchInRange = true;
+	            console.log('touch in range above');
+	        }
+	        else if (( dragStartBody - offsetToBodyWithHeight) > 0 && Math.abs(dragStartBody - offsetToBodyWithHeight) < 150 ){
+	            this.touchInRange = true;
+	            console.log('touch in range below');
+	        }
+	        startScrolled = this.getScrolled();
+	        event.stopPropagation();
+
+	    },
+
+
 	    initEvent: function(opt) {
 	        var that = this;
-	        if (opt.useParallax) {
-
-	            var orginData = {
-	                x: 0,
-	                y: 0
-	            };
-	            window.addEventListener('deviceorientation', function(event) {
-	                var gamma = event.gamma;
-	                var beta = event.beta;
-
-	                var x = -gamma;
-	                var y = -beta;
-
-	                if (Math.abs(Math.abs(x) - Math.abs(orginData.x)) < 0.1 || Math.abs(Math.abs(y) - Math.abs(orginData.y)) < 0.1) {
-	                    orginData.x = x;
-	                    orginData.y = y;
-	                    return;
-	                } else {
-	                    orginData.x = x;
-	                    orginData.y = y;
-	                }
-
-	                var halfWidth = window.innerWidth / 2;
-	                var halfHeight = window.innerHeight / 2;
-
-
-	                var max = 5;
-	                var items = $('.parallax');
-	                items.forEach(function(item) {
-	                    var dx = (item.getBoundingClientRect().width / max) * (x / halfWidth);
-	                    var dy = (item.getBoundingClientRect().width / max) * (y / halfHeight);
-
-	                    if ($(item).hasClass('item')) {
-	                        //$(item).addClass('parallax-item');
-	                        dx = -dx / 1 + 50;
-	                        dy = -dy / 1 + 50;
-	                        item.style['background-position'] = '' + dx + '% ' + dy + '%';
-	                        //$(item).removeClass('parallax-item');
-	                    } else {
-	                        item.style.transform = item.style['-webkit-transform'] = 'translate3d(' + dx + 'px,' + dy + 'px,0)';
-	                    }
-
-
-	                });
-
-
-	            }, false);
-	        }
-
 	        // 绑定事件
 	        $(opt.container).on('touchmove', function(e) {
 	            e.preventDefault();
@@ -428,6 +394,15 @@
 	            'touchend': that.touchEnd.bind(that),
 	            'touchcancel': that.touchEnd.bind(that),
 	        });
+	        // if (!$body.attr('single-page-event')) {
+	        //     $body.attr('single-page-event', 'bind');
+	            $body.on({
+	                'touchstart': that.touchStartBody.bind(that),
+	                'touchmove': that.touchMove.bind(that),
+	                'touchend': that.touchEnd.bind(that),
+	                'touchcancel': that.touchEnd.bind(that),
+	            });
+	        // }
 	    }
 	};
 
