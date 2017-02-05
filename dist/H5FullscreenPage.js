@@ -57,6 +57,7 @@
 	__webpack_require__(6);
 	__webpack_require__(8);
 	__webpack_require__(9);
+	__webpack_require__(11);
 	var animateObj = __webpack_require__(10);
 
 	var opt = {
@@ -192,37 +193,37 @@
 	        percentage = (dragStart - ev0.clientY) / window.screen.height; //
 	        var offset = that.getOffset();
 	        var scrolled = that.getScrolled();
+
+
 	        if (!that.scrollInScreen) {
 	            //非全屏  scroll组件没有完全进入
 	            if(percentage > 0 && (offset > scrolled)){
 	                event.preventDefault(); //swipeup
 	            }
 	            if(percentage < 0 && offset < scrolled){
-	                event.preventDefault();
+	                event.preventDefault();//touchMove 要屏蔽才能触发swipeUp
 	            }
-	            return;//touchMove 要屏蔽才能触发swipeUp
-	        }
+	        }else{
+	            //percentage > 0 向上滑动
+	            if (percentage > 0) {
+	                if (item.index() + 1 !== that.pageCount) {
+	                    var scale = 1 - 0.5 * percentage; //缩放系数，可以微调
+	                    animateObj[opt.type].upDrag(percentage, item);
+	                    event.preventDefault();
 
+	                } else {
+	                    //最后一个slide  向上滑动时 采用默认事件
+	                }
 
-	        //percentage > 0 向上滑动
-	        if (percentage > 0) {
-	            if (item.index() + 1 !== that.pageCount) {
-	                var scale = 1 - 0.5 * percentage; //缩放系数，可以微调
-	                animateObj[opt.type].upDrag(percentage, item);
-	                event.preventDefault();
+	            } else if (item.prev()) {
+	                if(item.index() !== 0  ){
+	                    animateObj[opt.type].downDrag(percentage, item);
+	                    event.preventDefault();
 
-	            } else {
-	                //最后一个slide  向上滑动时 采用默认事件
-	            }
+	                }else{
+	                    //第一个向 下拖动  默认
 
-	        } else if (item.prev()) {
-	            if(item.index() !== 0  ){
-	                animateObj[opt.type].downDrag(percentage, item);
-	                event.preventDefault();
-
-	            }else{
-	                //第一个向 下拖动  默认
-
+	                }
 	            }
 	        }
 	    },
@@ -286,6 +287,7 @@
 	    },
 
 	    swipeDown: function(event) {
+	        console.log('swipe down');
 	        var that = this;
 	        var item = $(event.target).closest('.item');
 	        if (!item.length) {
@@ -358,9 +360,12 @@
 	        var that = this;
 
 	        // 绑定事件
-	        $(opt.container).on('touchmove', function(e) {
-	            e.preventDefault();
-	        });
+	        // this.$item.on('touchstart', function(e) {
+	        //     e.preventDefault();
+	        // });
+	        // this.$item.on('touchmove', function(e) {
+	        //     e.preventDefault();
+	        // });
 
 	        this.$item.on({
 	            'touchstart': that.touchStart.bind(that),
@@ -823,6 +828,176 @@
 	        }
 	    }
 	};
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	;(function($){
+	  var touch = {},
+	    touchTimeout, tapTimeout, swipeTimeout, longTapTimeout,
+	    longTapDelay = 750,
+	    gesture
+
+	  function swipeDirection(x1, x2, y1, y2) {
+	    return Math.abs(x1 - x2) >=
+	      Math.abs(y1 - y2) ? (x1 - x2 > 0 ? 'Left' : 'Right') : (y1 - y2 > 0 ? 'Up' : 'Down')
+	  }
+
+	  function longTap() {
+	    longTapTimeout = null
+	    if (touch.last) {
+	      touch.el.trigger('longTap')
+	      touch = {}
+	    }
+	  }
+
+	  function cancelLongTap() {
+	    if (longTapTimeout) clearTimeout(longTapTimeout)
+	    longTapTimeout = null
+	  }
+
+	  function cancelAll() {
+	    if (touchTimeout) clearTimeout(touchTimeout)
+	    if (tapTimeout) clearTimeout(tapTimeout)
+	    if (swipeTimeout) clearTimeout(swipeTimeout)
+	    if (longTapTimeout) clearTimeout(longTapTimeout)
+	    touchTimeout = tapTimeout = swipeTimeout = longTapTimeout = null
+	    touch = {}
+	  }
+
+	  function isPrimaryTouch(event){
+	    return (event.pointerType == 'touch' ||
+	      event.pointerType == event.MSPOINTER_TYPE_TOUCH)
+	      && event.isPrimary
+	  }
+
+	  function isPointerEventType(e, type){
+	    return (e.type == 'pointer'+type ||
+	      e.type.toLowerCase() == 'mspointer'+type)
+	  }
+
+	  $(document).ready(function(){
+	    var now, delta, deltaX = 0, deltaY = 0, firstTouch, _isPointerType
+
+	    if ('MSGesture' in window) {
+	      gesture = new MSGesture()
+	      gesture.target = document.body
+	    }
+
+	    $(document)
+	      .bind('MSGestureEnd', function(e){
+	        var swipeDirectionFromVelocity =
+	          e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null
+	        if (swipeDirectionFromVelocity) {
+	          touch.el.trigger('swipe')
+	          touch.el.trigger('swipe'+ swipeDirectionFromVelocity)
+	        }
+	      })
+	      .on('touchstart MSPointerDown pointerdown', function(e){
+	        if((_isPointerType = isPointerEventType(e, 'down')) &&
+	          !isPrimaryTouch(e)) return
+	        firstTouch = _isPointerType ? e : e.touches[0]
+	        if (e.touches && e.touches.length === 1 && touch.x2) {
+	          // Clear out touch movement data if we have it sticking around
+	          // This can occur if touchcancel doesn't fire due to preventDefault, etc.
+	          touch.x2 = undefined
+	          touch.y2 = undefined
+	        }
+	        now = Date.now()
+	        delta = now - (touch.last || now)
+	        touch.el = $('tagName' in firstTouch.target ?
+	          firstTouch.target : firstTouch.target.parentNode)
+	        touchTimeout && clearTimeout(touchTimeout)
+	        touch.x1 = firstTouch.pageX
+	        touch.y1 = firstTouch.pageY
+	        if (delta > 0 && delta <= 250) touch.isDoubleTap = true
+	        touch.last = now
+	        longTapTimeout = setTimeout(longTap, longTapDelay)
+	        // adds the current touch contact for IE gesture recognition
+	        if (gesture && _isPointerType) gesture.addPointer(e.pointerId)
+	      })
+	      .on('touchmove MSPointerMove pointermove', function(e){
+	        if((_isPointerType = isPointerEventType(e, 'move')) &&
+	          !isPrimaryTouch(e)) return
+	        firstTouch = _isPointerType ? e : e.touches[0]
+	        cancelLongTap()
+	        touch.x2 = firstTouch.pageX
+	        touch.y2 = firstTouch.pageY
+
+	        deltaX += Math.abs(touch.x1 - touch.x2)
+	        deltaY += Math.abs(touch.y1 - touch.y2)
+	      })
+	      .on('touchend MSPointerUp pointerup', function(e){
+	        if((_isPointerType = isPointerEventType(e, 'up')) &&
+	          !isPrimaryTouch(e)) return
+	        cancelLongTap()
+
+	        // swipe
+	        if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
+	            (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30))
+
+	          swipeTimeout = setTimeout(function() {
+	            if (touch.el){
+	              touch.el.trigger('swipe')
+	              touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)))
+	            }
+	            touch = {}
+	          }, 0)
+
+	        // normal tap
+	        else if ('last' in touch)
+	          // don't fire tap when delta position changed by more than 30 pixels,
+	          // for instance when moving to a point and back to origin
+	          if (deltaX < 30 && deltaY < 30) {
+	            // delay by one tick so we can cancel the 'tap' event if 'scroll' fires
+	            // ('tap' fires before 'scroll')
+	            tapTimeout = setTimeout(function() {
+
+	              // trigger universal 'tap' with the option to cancelTouch()
+	              // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
+	              var event = $.Event('tap')
+	              event.cancelTouch = cancelAll
+	              // [by paper] fix -> "TypeError: 'undefined' is not an object (evaluating 'touch.el.trigger'), when double tap
+	              if (touch.el) touch.el.trigger(event)
+
+	              // trigger double tap immediately
+	              if (touch.isDoubleTap) {
+	                if (touch.el) touch.el.trigger('doubleTap')
+	                touch = {}
+	              }
+
+	              // trigger single tap after 250ms of inactivity
+	              else {
+	                touchTimeout = setTimeout(function(){
+	                  touchTimeout = null
+	                  if (touch.el) touch.el.trigger('singleTap')
+	                  touch = {}
+	                }, 250)
+	              }
+	            }, 0)
+	          } else {
+	            touch = {}
+	          }
+	          deltaX = deltaY = 0
+
+	      })
+	      // when the browser window loses focus,
+	      // for example when a modal dialog is shown,
+	      // cancel all ongoing events
+	      .on('touchcancel MSPointerCancel pointercancel', cancelAll)
+
+	    // scrolling the window indicates intention of the user
+	    // to scroll, not tap or swipe, so cancel all ongoing events
+	    $(window).on('scroll', cancelAll)
+	  })
+
+	  ;['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown',
+	    'doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function(eventName){
+	    $.fn[eventName] = function(callback){ return this.on(eventName, callback) }
+	  })
+	})(Zepto)
 
 
 /***/ }

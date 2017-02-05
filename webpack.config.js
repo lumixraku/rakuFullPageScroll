@@ -24,7 +24,7 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin("H5FullscreenPage.css"),
-        new ExtractTextPlugin("page-animation.css"),
+        // new ExtractTextPlugin("page-animation.css"),
         // new webpack.optimize.UglifyJsPlugin({
         //   compress: {
         //     warnings: false

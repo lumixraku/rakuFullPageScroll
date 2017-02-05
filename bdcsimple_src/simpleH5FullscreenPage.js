@@ -30,7 +30,8 @@ var startScrolled = 0; // 开始时已经滚动距离
 var currentItem;
 
 var dragStartBody = null;
-
+var dragStartBodyThrehold = window.screen.height/3;
+var animationSpeed = 1.71;
 
 function getElementTop(element) {　　　　
     var actualTop = element.offsetTop;　　　　
@@ -149,6 +150,10 @@ window.H5FullscreenPage.prototype = {
         //body的touchmove事件也到这里
         if (!that.touchInRange) return;
 
+        if( that.touchInRange){
+            event.preventDefault();
+        }
+
         // event.preventDefault();
         var ev0;
         if (event.touches) {
@@ -233,41 +238,40 @@ window.H5FullscreenPage.prototype = {
     moveoutslide_up: function(item) {
         console.log('moveout slide up');
         var that = this;
-        var scrollTo = 0;
-        var scrolled = that.getScrolled();
-
         //that.$containerElem[0] 指的是当前被拖动的item  此时此item 顶部已有一部分被遮住
         var offsetToBody = getElementTop(that.$containerElem[0]);
+        var scrolled = that.getScrolled();
+        var scrollTo = offsetToBody + that.$containerElem.height();
 
-        scrollTo = offsetToBody + that.$containerElem.height();
-        Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * 1.5, that.animateType, function(value, end) {
-            console.log(value.toFixed(3) + '...............');
-            window.scrollTo(0, value.toFixed(3));
-        });
+
+        // Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * animationSpeed, that.animateType, function(value, end) {
+        //     console.log(value.toFixed(3) + '...............');
+        //     window.scrollTo(0, value.toFixed(3));
+        // });
 
         //使用transform改变
-        // var winHeight = window.screen.height;
-        // var translateY = winHeight - (scrolled - offsetToBody);
-        //
-        // window.scrollTo(0, scrollTo);
-        //
-        // $body.css({
-        //     transform: 'translateY(' +translateY+ 'px)'
-        // });
-        // Math.animation(translateY, 0, Math.abs(winHeight) * 1.5, that.animateType, function(value, end) {
-        //     value = value.toFixed(3);
-        //     console.log(value, '...............', end);
-        //     $body.css({
-        //         transform: 'translate3d(0, ' +value+ 'px, 0)'
-        //     });
-        //     if(end){
-        //         $body.css({
-        //             transform: ''
-        //         });
-        //     }
-        // });
+        var winHeight = window.screen.height;
+        var translateY = winHeight - (scrolled - offsetToBody);
 
-        console.log('move up end-------------', scrollTo);
+        window.scrollTo(0, scrollTo);
+
+        $body.css({
+            transform: 'translateY(' +translateY+ 'px)'
+        });
+        Math.animation(translateY, 0, Math.abs(winHeight) * animationSpeed, that.animateType, function(value, end) {
+            value = value.toFixed(3);
+            console.log(value, '...............', end);
+            $body.css({
+                transform: 'translate3d(0, ' +value+ 'px, 0)'
+            });
+            if(end){
+                $body.css({
+                    transform: ''
+                });
+            }
+        });
+
+        // console.log('move up end-------------', scrollTo);
 
     },
     moveintoslide: function() {
@@ -276,7 +280,7 @@ window.H5FullscreenPage.prototype = {
         var that = this;
         var scrolled = that.getScrolled();
         var scrollTo = getElementTop(that.$containerElem[0]) || 0;
-        Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * 2, that.animateType, function(value, end) {
+        Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * animationSpeed, that.animateType, function(value, end) {
             console.log(value.toFixed(3));
             window.scrollTo(0, value.toFixed(3));
         });
@@ -293,10 +297,12 @@ window.H5FullscreenPage.prototype = {
 
         scrollTo = offsetToBody - that.$containerElem.height();
         if (scrollTo < 0) scrollTo = 0;
-        Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * 2, that.animateType, function(value, end) {
+        Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * animationSpeed, that.animateType, function(value, end) {
             window.scrollTo(0, value.toFixed(3));
         });
     },
+
+    //在单页组件附近区域的滚动  同样显示单页组件
     touchStartBody: function(event) {
         var that = this;
         // if (dragStartBody !== null) return;
@@ -311,14 +317,13 @@ window.H5FullscreenPage.prototype = {
         dragStartBody = ev0.pageY;
         var offsetToBody = that.getOffset();
         var offsetToBodyWithHeight = offsetToBody + that.$containerElem.height();
-        var dragStartBodyThrehold = 150;
 
         //这样太麻烦
-        if ((offsetToBody - dragStartBody) > 0 && Math.abs(offsetToBody - dragStartBody) < 150) {
+        if ((offsetToBody - dragStartBody) > 0 && Math.abs(offsetToBody - dragStartBody) < dragStartBodyThrehold) {
             this.touchInRange = true;
             console.log('touch in range above');
         }
-        else if (( dragStartBody - offsetToBodyWithHeight) > 0 && Math.abs(dragStartBody - offsetToBodyWithHeight) < 150 ){
+        else if (( dragStartBody - offsetToBodyWithHeight) > 0 && Math.abs(dragStartBody - offsetToBodyWithHeight) < dragStartBodyThrehold ){
             this.touchInRange = true;
             console.log('touch in range below');
         }

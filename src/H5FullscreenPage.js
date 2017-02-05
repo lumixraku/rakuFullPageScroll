@@ -4,6 +4,7 @@ require('./H5FullscreenPage.css');
 require('./page-animation.css');
 require('./tween/tween.js');
 require('./tween/animation.js');
+require('./touchEvent.js');
 var animateObj = require('./animateObj.js');
 
 var opt = {
@@ -139,37 +140,37 @@ window.H5FullscreenPage.prototype = {
         percentage = (dragStart - ev0.clientY) / window.screen.height; //
         var offset = that.getOffset();
         var scrolled = that.getScrolled();
+
+
         if (!that.scrollInScreen) {
             //非全屏  scroll组件没有完全进入
             if(percentage > 0 && (offset > scrolled)){
                 event.preventDefault(); //swipeup
             }
             if(percentage < 0 && offset < scrolled){
-                event.preventDefault();
+                event.preventDefault();//touchMove 要屏蔽才能触发swipeUp
             }
-            return;//touchMove 要屏蔽才能触发swipeUp
-        }
+        }else{
+            //percentage > 0 向上滑动
+            if (percentage > 0) {
+                if (item.index() + 1 !== that.pageCount) {
+                    var scale = 1 - 0.5 * percentage; //缩放系数，可以微调
+                    animateObj[opt.type].upDrag(percentage, item);
+                    event.preventDefault();
 
+                } else {
+                    //最后一个slide  向上滑动时 采用默认事件
+                }
 
-        //percentage > 0 向上滑动
-        if (percentage > 0) {
-            if (item.index() + 1 !== that.pageCount) {
-                var scale = 1 - 0.5 * percentage; //缩放系数，可以微调
-                animateObj[opt.type].upDrag(percentage, item);
-                event.preventDefault();
+            } else if (item.prev()) {
+                if(item.index() !== 0  ){
+                    animateObj[opt.type].downDrag(percentage, item);
+                    event.preventDefault();
 
-            } else {
-                //最后一个slide  向上滑动时 采用默认事件
-            }
+                }else{
+                    //第一个向 下拖动  默认
 
-        } else if (item.prev()) {
-            if(item.index() !== 0  ){
-                animateObj[opt.type].downDrag(percentage, item);
-                event.preventDefault();
-
-            }else{
-                //第一个向 下拖动  默认
-
+                }
             }
         }
     },
@@ -233,6 +234,7 @@ window.H5FullscreenPage.prototype = {
     },
 
     swipeDown: function(event) {
+        console.log('swipe down');
         var that = this;
         var item = $(event.target).closest('.item');
         if (!item.length) {
@@ -305,9 +307,12 @@ window.H5FullscreenPage.prototype = {
         var that = this;
 
         // 绑定事件
-        $(opt.container).on('touchmove', function(e) {
-            e.preventDefault();
-        });
+        // this.$item.on('touchstart', function(e) {
+        //     e.preventDefault();
+        // });
+        // this.$item.on('touchmove', function(e) {
+        //     e.preventDefault();
+        // });
 
         this.$item.on({
             'touchstart': that.touchStart.bind(that),
