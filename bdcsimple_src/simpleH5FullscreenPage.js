@@ -33,6 +33,13 @@ var dragStartBody = null;
 var dragStartBodyThrehold = window.screen.height/3;
 var animationSpeed = 1.71;
 
+var animateEndScrollTo = 0;
+
+
+//
+var NO_ANIMATION_CLASS = 'no-animation';
+
+
 function getElementTop(element) {　　　　
     var actualTop = element.offsetTop;　　　　
     var current = element.offsetParent;　　　　
@@ -42,6 +49,16 @@ function getElementTop(element) {　　　　
     }　　　　
     return actualTop;　　
 }
+function getElementBottom(element){
+    var actualBottom = element.offsetBottom;　　　　
+    var current = element.offsetParent;　　　　
+    while (current !== null) {　　　　　　
+        actualBottom += current.offsetBottom;　　　　　　
+        current = current.offsetParent;　　　　
+    }　　　　
+    return actualBottom;　　
+}
+
 //
 // $(window).scroll(function() {
 //     document.webkitExitFullscreen && document.webkitExitFullscreen();
@@ -122,7 +139,7 @@ window.H5FullscreenPage.prototype = {
         startScrolled = this.getScrolled();
 
         //分别关闭item的动画效果,动画效果只在松开抓取时出现
-        // item.addClass('no-animation');
+        $body.addClass(NO_ANIMATION_CLASS);
         // item.next().addClass('no-animation');
         // item.prev().addClass('no-animation');
 
@@ -188,14 +205,14 @@ window.H5FullscreenPage.prototype = {
         // }
 
 
-        // item.removeClass('no-animation');
+        $body.removeClass(NO_ANIMATION_CLASS);
         // item.next().removeClass('no-animation');
         // item.prev().removeClass('no-animation');
 
         //抓取停止后，根据临界值做相应判断
-        var offsetToBody = that.getOffset();
+        var offsetToBody = getElementTop(that.$containerElem[0]);
         var scrolled = that.getScrolled();
-        console.log('touchend percentage', percentage);
+        // console.log('touchend percentage', percentage);
 
         if (that.touchInRange) {
             // console.log('touchend in range');
@@ -240,9 +257,11 @@ window.H5FullscreenPage.prototype = {
         var that = this;
         //that.$containerElem[0] 指的是当前被拖动的item  此时此item 顶部已有一部分被遮住
         var offsetToBody = getElementTop(that.$containerElem[0]);
+        // var offsetToBottom = getElementBottom(that.$containerElem[0]);
         var scrolled = that.getScrolled();
-        var scrollTo = offsetToBody + that.$containerElem.height();
-
+        var scrollTo = offsetToBody + that.$containerElem.height(); //滚动结束后应该停留的位置
+        var maxScrolled = document.body.scrollHeight - window.screen.height; //最大可滚动距离
+        animateEndScrollTo = Math.min(scrollTo, maxScrolled);
 
         // Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * animationSpeed, that.animateType, function(value, end) {
         //     console.log(value.toFixed(3) + '...............');
@@ -252,24 +271,29 @@ window.H5FullscreenPage.prototype = {
         //使用transform改变
         var winHeight = window.screen.height;
         var translateY = winHeight - (scrolled - offsetToBody);
+        translateY = Math.min(translateY, (maxScrolled - scrolled));
+        var offsetToBottom = document.body.scrollHeight - (offsetToBody + winHeight);
+        translateY = Math.min(translateY, offsetToBottom);
 
-        window.scrollTo(0, scrollTo);
 
         $body.css({
-            transform: 'translateY(' +translateY+ 'px)'
+            '-webkit-transform': 'translate3d(0, ' + (-translateY)  + 'px, 0)',
+            // '-webkit-transition': 'all 700ms cubic-bezier(0.550, 0.085, 0.000, 0.990)',
         });
-        Math.animation(translateY, 0, Math.abs(winHeight) * animationSpeed, that.animateType, function(value, end) {
-            value = value.toFixed(3);
-            console.log(value, '...............', end);
-            $body.css({
-                transform: 'translate3d(0, ' +value+ 'px, 0)'
-            });
-            if(end){
-                $body.css({
-                    transform: ''
-                });
-            }
-        });
+
+        //这里使用缓动函数非常卡顿
+        // Math.animation(translateY, 0, Math.abs(winHeight) * animationSpeed, that.animateType, function(value, end) {
+        //     value = value.toFixed(3);
+        //     console.log(value, '...............', end);
+        //     $body.css({
+        //         '-webkit-transform': 'translate3d(0, ' +value+ 'px, 0)'
+        //     });
+        //     if(end){
+        //         $body.css({
+        //             '-webkit-transform': 'translate3d(0,0,0)'
+        //         });
+        //     }
+        // });
 
         // console.log('move up end-------------', scrollTo);
 
@@ -296,10 +320,25 @@ window.H5FullscreenPage.prototype = {
         var offsetToBody = getElementTop(that.$containerElem[0]);
 
         scrollTo = offsetToBody - that.$containerElem.height();
+        scrollTo = Math.min(scrollTo, offsetToBody);
         if (scrollTo < 0) scrollTo = 0;
-        Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * animationSpeed, that.animateType, function(value, end) {
-            window.scrollTo(0, value.toFixed(3));
+
+
+
+        // Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * animationSpeed, that.animateType, function(value, end) {
+        //     window.scrollTo(0, value.toFixed(3));
+        // });
+
+        //使用transform
+        animateEndScrollTo = scrollTo;
+        var translateY = window.screen.height + scrolled - offsetToBody;
+        translateY  = Math.min(translateY, scrolled);
+        if(document.body.scrollTop === 0) translateY = 0;
+        $body.css({
+            '-webkit-transform': 'translate3d(0, ' + (translateY)  + 'px, 0)',
+            // '-webkit-transition': 'all 700ms cubic-bezier(0.550, 0.085, 0.000, 0.990)',
         });
+
     },
 
     //在单页组件附近区域的滚动  同样显示单页组件
@@ -315,23 +354,32 @@ window.H5FullscreenPage.prototype = {
         //抓取时的所在位置
         dragStart = ev0.clientY;
         dragStartBody = ev0.pageY;
-        var offsetToBody = that.getOffset();
+        var offsetToBody = getElementTop(that.$containerElem[0]);
         var offsetToBodyWithHeight = offsetToBody + that.$containerElem.height();
 
         //这样太麻烦
+
+        //向上滑
         if ((offsetToBody - dragStartBody) > 0 && Math.abs(offsetToBody - dragStartBody) < dragStartBodyThrehold) {
             this.touchInRange = true;
             console.log('touch in range above');
-        }
-        else if (( dragStartBody - offsetToBodyWithHeight) > 0 && Math.abs(dragStartBody - offsetToBodyWithHeight) < dragStartBodyThrehold ){
+            event.preventDefault();
+        } else if (( dragStartBody - offsetToBodyWithHeight) > 0 && Math.abs(dragStartBody - offsetToBodyWithHeight) < dragStartBodyThrehold ){
             this.touchInRange = true;
             console.log('touch in range below');
+            event.preventDefault();
         }
         startScrolled = this.getScrolled();
-        event.stopPropagation();
+        // event.stopPropagation();
 
     },
-
+    bodyTransitionEnd:function(){
+        $body.addClass(NO_ANIMATION_CLASS);
+        $body.css({
+            '-webkit-transform': 'translate3d(0,0,0)'
+        });
+        window.scrollTo(0, animateEndScrollTo);
+    },
 
     initEvent: function(opt) {
         var that = this;
@@ -353,6 +401,7 @@ window.H5FullscreenPage.prototype = {
                 'touchmove': that.touchMove.bind(that),
                 'touchend': that.touchEnd.bind(that),
                 'touchcancel': that.touchEnd.bind(that),
+                'transitionend': that.bodyTransitionEnd.bind(that)
             });
         // }
     }

@@ -15,14 +15,17 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    transition: all 700ms cubic-bezier(0.550, 0.085, 0.000, 0.990);
-    -webkit-transition: all 700ms cubic-bezier(0.550, 0.085, 0.000, 0.990);
+    /*transition: all 700ms cubic-bezier(0,.49,.46,.82);
+    -webkit-transition: all 700ms cubic-bezier(0,.49,.46,.82);*/
     /*transition: all 300ms ease-in-out;
     -webkit-transition: all 300ms ease-in-out;*/
     background-position: center;
 }
 
-
+body{
+    transition: all 700ms cubic-bezier(.48,.12,.43,.93);
+    -webkit-transition: all 700ms cubic-bezier(.48,.12,.43,.93);
+}
 .no-animation {
     transition: none;
     -webkit-transition: none;
