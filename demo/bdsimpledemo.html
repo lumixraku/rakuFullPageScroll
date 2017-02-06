@@ -16,6 +16,10 @@
         <link rel="stylesheet"
             type="text/css"
             href="../dist/simple_page-animation.css">
+
+        <!-- <script src="http://10.2.214.196:8099/target/target-script-min.js#anonymous"></script> -->
+
+
         <style type="text/css">
 html,
 body {
@@ -34,7 +38,9 @@ body {
 ul {
     list-style: none;
 }
-
+.content{
+    /*height: 100%;*/
+}
 .item {
     /*position: relative;*/
     display: flex;
@@ -43,17 +49,12 @@ ul {
     font-size: 48px;
 }
 
-
 .item2 {
     background-color: pink;
 }
 
 .item1 {
-    background: linear-gradient(45deg, rgba(1,179,242,0.91) 0%,
-    rgba(249,105,92,0.69) 16%,
-    rgba(89,247,155,0.91) 46%,
-    rgba(221,247,56,0.86) 76%,
-    rgba(30,105,222,1) 100%);
+    background: linear-gradient(45deg, rgba(1, 179, 242, 0.91) 0%, rgba(249, 105, 92, 0.69) 16%, rgba(89, 247, 155, 0.91) 46%, rgba(221, 247, 56, 0.86) 76%, rgba(30, 105, 222, 1) 100%);
 }
 
 .item3 {
@@ -73,91 +74,91 @@ ul {
 }
 
 .others {
-    height: 33%;
-    border:1px solid black;
+    /*height: 33%;*/
+    height: 300px;
+    border: 1px solid black;
     background-color: yellow;
+    box-sizing: border-box;
 }
+
+
         </style>
     </head>
 
     <body>
-        <div class="others">
-            这里只是一个图片
-        </div>
-        <div class="others">
-            这里只是一个图片.........
-        </div>
-        <!-- <div class="others">
-            这里只是一个图片
-        </div> -->
-        <!-- <div class="others">
-            这里只是一个图片
-        </div>
-        <div class="others">
-            这里只是一个图片
-        </div>
-        <div class="others">
-            这里只是一个图片
-        </div>
+        <div class="content">
 
-        <div class="others">
-            这里只是一个图片
-        </div>
-        <div class="others">
-            这里只是一个图片
-        </div> -->
-        <div id="fullpage1"
-            class="H5FullscreenPage-wrap">
-            <div class="item item1">
-                <h2>page1</h2>
+            <div class="others">
+                这里只是一个图片
             </div>
-        </div>
+            <div class="others">
+                这里只是一个图片
+            </div>
+            <div class="others" style="background:pink">
+                这里只是一个图片.........
+            </div>
+            <div id="fullpage1"
+                class="H5FullscreenPage-wrap">
+                <div class="item item1">
+                    <h2>page1</h2>
+                </div>
+            </div>
 
-        <div id="fullpage2"
-            class="H5FullscreenPage-wrap">
-            <div class="item item1">
-                <h2>page2</h2>
+            <div id="fullpage2"
+                class="H5FullscreenPage-wrap">
+                <div class="item item1">
+                    <h2>page2</h2>
+                </div>
             </div>
-        </div>
 
-        <div id="fullpage3"
-            class="H5FullscreenPage-wrap">
-            <div class="item item1">
-                <h2>page3</h2>
+            <div id="fullpage3"
+                class="H5FullscreenPage-wrap">
+                <div class="item item1">
+                    <h2>page3</h2>
+                </div>
             </div>
-        </div>
-        <div class="others">
-            这里只是一个图片..........
-        </div>
-        <div class="others">
-            这里只是一个图片
-        </div>
-        <div class="others">
-            这里只是一个图片
-        </div>
-        <div class="others">
-            这里只是一个图片
-        </div>
-        <div class="others">
-            这里只是一个图片............
-        </div>
-        <div id="fullpage4"
-            class="H5FullscreenPage-wrap">
-            <div class="item item1">
-                <h2>page4</h2>
+            <div class="others" style="background:pink">
+                这里只是一个图片..........
             </div>
-        </div>
-        <div id="fullpage5"
-            class="H5FullscreenPage-wrap">
-            <div class="item item1">
-                <h2>page5</h2>
+            <div class="others">
+                这里只是一个图片
             </div>
-        </div>
-        <div class="others">
-            这里只是一个图片........
-        </div>
-        <div class="others">
-            这里只是一个图片
+            <div class="others">
+                这里只是一个图片
+            </div>
+            <div class="others">
+                这里只是一个图片
+            </div>
+            <div class="others">
+                这里只是一个图片
+            </div>
+            <div class="others">
+                这里只是一个图片
+            </div>
+            <div class="others">
+                这里只是一个图片
+            </div>
+            <div class="others" style="background:pink">
+                这里只是一个图片............
+            </div>
+            <div id="fullpage4"
+                class="H5FullscreenPage-wrap">
+                <div class="item item1">
+                    <h2>page4</h2>
+                </div>
+            </div>
+            <div id="fullpage5"
+                class="H5FullscreenPage-wrap">
+                <div class="item item1">
+                    <h2>page5</h2>
+                </div>
+            </div>
+            <div class="others" style="background:pink">
+                这里只是一个图片........
+            </div>
+            <div class="others">
+                这里只是一个图片
+            </div>
         </div>
 
         <script src="jquery.js"></script>
