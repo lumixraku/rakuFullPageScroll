@@ -57,8 +57,8 @@
 	__webpack_require__(6);
 	__webpack_require__(8);
 	__webpack_require__(9);
-	__webpack_require__(11);
-	var animateObj = __webpack_require__(10);
+	__webpack_require__(10);
+	var animateObj = __webpack_require__(11);
 
 	var opt = {
 	    'container': '',
@@ -231,7 +231,7 @@
 	        console.log('touch end');
 	        var that = this;
 	        //防止多次滚动，故增加一个覆盖层
-	        $('.overlay').show();
+	        // $('.overlay').show();
 	        dragStart = null;
 	        var item = $(event.target).closest('.item');
 	        if (!item.length) {
@@ -380,9 +380,10 @@
 	            //覆盖层隐藏
 	            $('.overlay').hide();
 	        });
-	        $('.overlay').on('tap', function() {
+	        $('.overlay').on('tap', function(e) {
 	            //覆盖层隐藏
 	            $('.overlay').hide();
+	            e.preventDefault();
 	        });
 
 	        this.$item.on('transitionend webkitTransitionEnd', function(event) {
@@ -719,121 +720,6 @@
 /* 10 */
 /***/ function(module, exports) {
 
-	module.exports = {
-	    '1': {
-	        'upDrag': function(percentage, item) {
-	            var translateY = 1 - 0.7 * percentage; //位置系数，可以微调
-	            item.next().css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //下一个item上移动
-	        },
-	        'downDrag': function(percentage, item) {
-
-	            var translateY = -(0.7 * percentage);
-	            item.prev().css('-webkit-transform', 'translate3d(0,' + (translateY * 100 - 100) + '%,0)');
-	            item.css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //当前item下移动
-	        },
-	        'nextSlide': function(item) {
-	            item.css('-webkit-transform', 'translate3d(0,-100%,0)');
-	            item.next().css('-webkit-transform', 'translate3d(0,0,0)');
-	        },
-	        'prevSlide': function(item) {
-	            item.prev().css('-webkit-transform', 'scale(1)');
-	            item.css('-webkit-transform', 'translate3d(0,100%,0)');
-	        },
-	        'showSlide': function(item) {
-	            item.css('-webkit-transform', 'scale(1)');
-	            item.next().css('-webkit-transform', 'translate3d(0,100%,0)');
-	        }
-	    },
-	    '2': {
-	        'upDrag': function(percentage, item) {
-	            var scale = 1 - 0.2 * percentage; //缩放系数，可以微调
-	            var translateY = 1 - 0.7 * percentage; //位置系数，可以微调
-	            item.css('-webkit-transform', 'scale(' + scale + ')'); //当前item缩小
-	            item.next().css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //下一个item上移动
-	        },
-	        'downDrag': function(percentage, item) {
-	            console.log('down drag');
-
-	            var scale = 0.8 - 0.2 * percentage;
-	            var translateY = -(0.7 * percentage);
-	            item.css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //当前item下移动
-	            item.prev().css('-webkit-transform', 'scale(' + scale + ')'); //前一个item放大
-	        },
-	        'nextSlide': function(item) {
-	            item.css('-webkit-transform', 'scale(.8)');
-	            item.next().css('-webkit-transform', 'translate3d(0,0,0)');
-	        },
-	        'prevSlide': function(item) {
-	            item.prev().css('-webkit-transform', 'scale(1)');
-	            item.css('-webkit-transform', 'translate3d(0,100%,0)');
-	        },
-	        'showSlide': function(item) {
-	            item.css('-webkit-transform', 'scale(1)');
-	            item.next().css('-webkit-transform', 'translate3d(0,100%,0)');
-	        }
-	    },
-	    '3': {
-	        'upDrag': function(percentage, item) {
-	            var translateY = 1 - 0.4 * percentage; //位置系数，可以微调
-	            item.css('-webkit-transform', 'translate3d(0,' + (translateY * 100 - 100) + '%,0)');
-	            item.next().css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //下一个item上移动
-	        },
-	        'downDrag': function(percentage, item) {
-	            var translateY = -(0.4 * percentage);
-	            item.prev().css('-webkit-transform', 'translate3d(0,' + (translateY * 100 - 100) + '%,0)');
-	            item.css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //当前item下移动
-	        },
-	        'nextSlide': function(item) {
-	            item.css('-webkit-transform', 'translate3d(0,-100%,0)');
-	            item.next().css('-webkit-transform', 'translate3d(0,0,0)');
-	        },
-	        'prevSlide': function(item) {
-	            item.prev().css('-webkit-transform', 'scale(1)');
-	            item.css('-webkit-transform', 'translate3d(0,100%,0)');
-	        },
-	        'showSlide': function(item) {
-	            item.css('-webkit-transform', 'scale(1)');
-	            item.next().css('-webkit-transform', 'translate3d(0,100%,0)');
-	        }
-	    },
-	    '4': {
-	        'upDrag': function(percentage, item) {
-	            var translateY = 1 - 0.4 * percentage; //位置系数，可以微调
-	            item.css('-webkit-transform', 'translate3d(0,' + (translateY * 100 - 100) + '%,0)');
-	            item.next().css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //下一个item上移动
-	        },
-	        'downDrag': function(percentage, item) {
-
-	            var translateY = -(0.4 * percentage);
-	            item.prev().css('-webkit-transform', 'translate3d(0,' + (translateY * 100 - 100) + '%,0)');
-	            item.css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //当前item下移动
-	        },
-	        'nextSlide': function(item) {
-	            item.addClass('zindex');
-	            setTimeout(function() {
-	                item.removeClass('no-animation').css('-webkit-transform', 'translate3d(0,-100%,0)');
-	                item.next().removeClass('zindex').addClass('no-animation').css('-webkit-transform', 'translate3d(0,0,0)');
-	            }, 100);
-
-	        },
-	        'prevSlide': function(item) {
-
-	            item.prev().css('-webkit-transform', 'translate3d(0,0,0)');
-	            item.next().css('-webkit-transform', 'translate3d(0,100%,0)');
-	            item.removeClass('zindex');
-	        },
-	        'showSlide': function(item) {
-	            item.css('-webkit-transform', 'scale(1)');
-	            item.next().css('-webkit-transform', 'translate3d(0,100%,0)');
-	        }
-	    }
-	};
-
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
 	;(function($){
 	  var touch = {},
 	    touchTimeout, tapTimeout, swipeTimeout, longTapTimeout,
@@ -998,6 +884,121 @@
 	    $.fn[eventName] = function(callback){ return this.on(eventName, callback) }
 	  })
 	})(Zepto)
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	    '1': {
+	        'upDrag': function(percentage, item) {
+	            var translateY = 1 - 0.7 * percentage; //位置系数，可以微调
+	            item.next().css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //下一个item上移动
+	        },
+	        'downDrag': function(percentage, item) {
+
+	            var translateY = -(0.7 * percentage);
+	            item.prev().css('-webkit-transform', 'translate3d(0,' + (translateY * 100 - 100) + '%,0)');
+	            item.css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //当前item下移动
+	        },
+	        'nextSlide': function(item) {
+	            item.css('-webkit-transform', 'translate3d(0,-100%,0)');
+	            item.next().css('-webkit-transform', 'translate3d(0,0,0)');
+	        },
+	        'prevSlide': function(item) {
+	            item.prev().css('-webkit-transform', 'scale(1)');
+	            item.css('-webkit-transform', 'translate3d(0,100%,0)');
+	        },
+	        'showSlide': function(item) {
+	            item.css('-webkit-transform', 'scale(1)');
+	            item.next().css('-webkit-transform', 'translate3d(0,100%,0)');
+	        }
+	    },
+	    '2': {
+	        'upDrag': function(percentage, item) {
+	            var scale = 1 - 0.2 * percentage; //缩放系数，可以微调
+	            var translateY = 1 - 0.7 * percentage; //位置系数，可以微调
+	            item.css('-webkit-transform', 'scale(' + scale + ')'); //当前item缩小
+	            item.next().css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //下一个item上移动
+	        },
+	        'downDrag': function(percentage, item) {
+	            console.log('down drag');
+
+	            var scale = 0.8 - 0.2 * percentage;
+	            var translateY = -(0.7 * percentage);
+	            item.css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //当前item下移动
+	            item.prev().css('-webkit-transform', 'scale(' + scale + ')'); //前一个item放大
+	        },
+	        'nextSlide': function(item) {
+	            item.css('-webkit-transform', 'scale(.8)');
+	            item.next().css('-webkit-transform', 'translate3d(0,0,0)');
+	        },
+	        'prevSlide': function(item) {
+	            item.prev().css('-webkit-transform', 'scale(1)');
+	            item.css('-webkit-transform', 'translate3d(0,100%,0)');
+	        },
+	        'showSlide': function(item) {
+	            item.css('-webkit-transform', 'scale(1)');
+	            item.next().css('-webkit-transform', 'translate3d(0,100%,0)');
+	        }
+	    },
+	    '3': {
+	        'upDrag': function(percentage, item) {
+	            var translateY = 1 - 0.4 * percentage; //位置系数，可以微调
+	            item.css('-webkit-transform', 'translate3d(0,' + (translateY * 100 - 100) + '%,0)');
+	            item.next().css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //下一个item上移动
+	        },
+	        'downDrag': function(percentage, item) {
+	            var translateY = -(0.4 * percentage);
+	            item.prev().css('-webkit-transform', 'translate3d(0,' + (translateY * 100 - 100) + '%,0)');
+	            item.css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //当前item下移动
+	        },
+	        'nextSlide': function(item) {
+	            item.css('-webkit-transform', 'translate3d(0,-100%,0)');
+	            item.next().css('-webkit-transform', 'translate3d(0,0,0)');
+	        },
+	        'prevSlide': function(item) {
+	            item.prev().css('-webkit-transform', 'scale(1)');
+	            item.css('-webkit-transform', 'translate3d(0,100%,0)');
+	        },
+	        'showSlide': function(item) {
+	            item.css('-webkit-transform', 'scale(1)');
+	            item.next().css('-webkit-transform', 'translate3d(0,100%,0)');
+	        }
+	    },
+	    '4': {
+	        'upDrag': function(percentage, item) {
+	            var translateY = 1 - 0.4 * percentage; //位置系数，可以微调
+	            item.css('-webkit-transform', 'translate3d(0,' + (translateY * 100 - 100) + '%,0)');
+	            item.next().css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //下一个item上移动
+	        },
+	        'downDrag': function(percentage, item) {
+
+	            var translateY = -(0.4 * percentage);
+	            item.prev().css('-webkit-transform', 'translate3d(0,' + (translateY * 100 - 100) + '%,0)');
+	            item.css('-webkit-transform', 'translate3d(0,' + translateY * 100 + '%,0)'); //当前item下移动
+	        },
+	        'nextSlide': function(item) {
+	            item.addClass('zindex');
+	            setTimeout(function() {
+	                item.removeClass('no-animation').css('-webkit-transform', 'translate3d(0,-100%,0)');
+	                item.next().removeClass('zindex').addClass('no-animation').css('-webkit-transform', 'translate3d(0,0,0)');
+	            }, 100);
+
+	        },
+	        'prevSlide': function(item) {
+
+	            item.prev().css('-webkit-transform', 'translate3d(0,0,0)');
+	            item.next().css('-webkit-transform', 'translate3d(0,100%,0)');
+	            item.removeClass('zindex');
+	        },
+	        'showSlide': function(item) {
+	            item.css('-webkit-transform', 'scale(1)');
+	            item.next().css('-webkit-transform', 'translate3d(0,100%,0)');
+	        }
+	    }
+	};
 
 
 /***/ }

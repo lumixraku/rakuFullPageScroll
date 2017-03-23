@@ -178,7 +178,7 @@ window.H5FullscreenPage.prototype = {
         console.log('touch end');
         var that = this;
         //防止多次滚动，故增加一个覆盖层
-        $('.overlay').show();
+        // $('.overlay').show();
         dragStart = null;
         var item = $(event.target).closest('.item');
         if (!item.length) {
@@ -327,9 +327,10 @@ window.H5FullscreenPage.prototype = {
             //覆盖层隐藏
             $('.overlay').hide();
         });
-        $('.overlay').on('tap', function() {
+        $('.overlay').on('tap', function(e) {
             //覆盖层隐藏
             $('.overlay').hide();
+            e.preventDefault();
         });
 
         this.$item.on('transitionend webkitTransitionEnd', function(event) {

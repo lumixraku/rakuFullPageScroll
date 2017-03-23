@@ -85,6 +85,11 @@
 
 	var animateEndScrollTo = 0;
 
+	var PART_UP = 'partUp';
+	var PART_DOWN = 'partDown';
+	var PART_FIT = 'fit';
+	var PART_OUT_UP = 'partOutUp';
+	var PART_OUT_DOWN = 'partOutDown';
 
 	function getElementTop(element) {　　　　
 	    var actualTop = element.offsetTop;　　　　
@@ -158,8 +163,8 @@
 	        currentItem = this.$item.first();
 	        currentItem.attr('state', 'next');
 
-	        this.$overlay = $('<div class="overlay hide"></div>');
-	        $('body').append(this.$overlay);
+	        // this.$overlay = $('<div class="overlay hide"></div>');
+	        // $('body').append(this.$overlay);
 
 
 	        if (opt.useArrow) {
@@ -174,9 +179,9 @@
 	        var that = this;
 	        if (dragStart !== null) return;
 	        // $('.overlay').hide();
-	        that.$overlay.removeClass('hide');
+	        // that.$overlay.removeClass('hide');
 
-	        var item = $(event.target).closest('.item');
+	        // var item = $(event.target).closest('.item');
 	        // if (!item.length) {
 	        //     $('.overlay').hide();
 	        //     return;
@@ -189,21 +194,21 @@
 	        }
 	        //抓取时的所在位置
 	        dragStart = ev0.clientY;
-	        startScrolled = getScrolled();
+	        // startScrolled = getScrolled();
 
 	        //分别关闭item的动画效果,动画效果只在松开抓取时出现
-	        $body.addClass(NO_ANIMATION_CLASS);
+	        // $body.addClass(NO_ANIMATION_CLASS);
 
-	        var scrolledTop = getScrolled();
-	        var offsetBody = that.offsetToBodyTop;
+	        // var scrolledTop = getScrolled();
+	        // var offsetBody = that.offsetToBodyTop;
 
-	        that.scrollInScreen = scrolledTop === offsetBody;
-	        that.touchInRange = true; //表示进入到了指定的滑动区域  //单页组件以及单页组件附近
-
-
+	        // that.scrollInScreen = scrolledTop === offsetBody;
+	        // that.touchInRange = true; //表示进入到了指定的滑动区域  //单页组件以及单页组件附近
 
 
-	        that.touchInPage = true;
+
+
+	        // that.touchInPage = true;
 	        console.log('scrollInScreen', that.scrollInScreen);
 
 	        // event.stopPropagation();
@@ -212,192 +217,184 @@
 	    },
 	    touchMove: function(event) {
 	        var that = this;
-
-	        if(that.touchInPage){
-	            event.stopPropagation();
+	        var ev0;
+	        if (event.touches) {
+	            ev0 = event.touches[0];
 	        }
-	        // console.log('touch move');
-	        // if (dragStart === null) return;
+	        if (event.originalEvent.touches) {
+	            ev0 = event.originalEvent.touches[0];
+	        }
 
-	        if (that.touchInRange) {
-	            var ev0;
-	            if (event.touches) {
-	                ev0 = event.touches[0];
-	            }
-	            if (event.originalEvent.touches) {
-	                ev0 = event.originalEvent.touches[0];
-	            }
-
-	            //得到抓取开始时于进行中的差值的百分比
-	            percentage = (dragStart - ev0.clientY) / WINDOW_HEIGHT;
-	            // console.log('touch move in range ', percentage);
+	        //得到抓取开始时于进行中的差值的百分比
+	        percentage = (dragStart - ev0.clientY) / WINDOW_HEIGHT;
 
 
-	            if(that.touchInRangeAbove && percentage > 0){
-	                event.preventDefault();
-	            }
-	            if(that.touchInRangeBelow && percentage < 0){
-	                event.preventDefault();
-	            }
-	            if(that.touchInPage){
-	                event.preventDefault();
-	            }
+	        // var inScreenInfo = that._inScreen();
 
-	            if (percentage > 0) {
-	                window.scrollTo(0, startScrolled + Math.abs(dragStart - ev0.clientY));
+	        // if(!inScreenInfo.partup && !inScreenInfo.partdown && !inScreenInfo.fit){
 
+	        // }else{
+	        //     event.preventDefault();
+
+	        //     if (percentage > 0) {
+	        //         window.scrollTo(0, startScrolled + Math.abs(dragStart - ev0.clientY));
+
+	        //     } else {
+	        //         window.scrollTo(0, startScrolled - Math.abs(dragStart - ev0.clientY));
+	        //     }
+	        // }
+
+
+
+
+	    },
+
+	    _inScreen: function() {
+	        var $content = $('.content');
+	        var $h5fullItem = $content.find('.H5FullscreenPage-wrap');
+	        var inScreenElem = [];
+	        var inScreenInfo = {
+	            partup: null,
+	            partdown: null,
+	            fit: null,
+	            inScreenElem: inScreenElem
+	        };
+	        $.each($h5fullItem, function(idx, h5fullItem) {
+	            var posInfo = h5fullItem.getBoundingClientRect();
+	            var elemInfo = {};
+	            if (posInfo.bottom > 0) {
+
+
+	                if (posInfo.top < 0) {
+	                    elemInfo.pos = PART_UP;
+	                    inScreenInfo.partup = h5fullItem;
+	                } else if (posInfo.top > 0) {
+
+	                    if (posInfo.top > WINDOW_HEIGHT) {
+	                        elemInfo.pos = PART_OUT_DOWN;
+	                    } else {
+	                        elemInfo.pos = PART_DOWN;
+	                        inScreenInfo.partdown = h5fullItem;
+	                    }
+
+	                } else if (posInfo.top == 0) {
+	                    elemInfo.pos = PART_FIT;
+	                    inScreenInfo.fit = h5fullItem;
+	                }
 	            } else {
-	                window.scrollTo(0, startScrolled - Math.abs(dragStart - ev0.clientY));
+	                elemInfo.pos = PART_OUT_UP;
 	            }
-
-	        }
-
+	            elemInfo.elem = h5fullItem;
+	            if ([PART_DOWN, PART_UP, PART_FIT].indexOf(elemInfo.pos) > -1) {
+	                inScreenElem.push(elemInfo);
+	            }
+	        });
+	        console.log(inScreenInfo);
+	        return inScreenInfo;
 	    },
 	    touchEnd: function(event) {
 	        var that = this;
-	        // var target = event.target;
-	        // var parent = that.$containerElem[0];
-
-	        if(that.touchInPage){
-	            event.stopPropagation();
-	        }
+	        var inScreenInfo = that._inScreen();
+	        console.log(inScreenInfo)
 
 	        dragStart = null;
 	        dragStartBody = null;
 
-	        //防止多次滚动，故增加一个覆盖层
-	        // $('.overlay').show();
-	        $body.removeClass(NO_ANIMATION_CLASS);
-	        // item.next().removeClass('no-animation');
-	        // item.prev().removeClass('no-animation');
-
 	        //抓取停止后，根据临界值做相应判断
 	        var offsetToBody = that.offsetToBodyTop;
+	        var scrolled = getScrolled();
 
-	        if (that.touchInRange) {
 
-	            var scrolled = getScrolled();
-	            if(that.touchInPage){
 
-	                that.$overlay.removeClass('hide');
-	                if (Math.abs(percentage) >= dragThreshold) {
-	                    if (offsetToBody < scrolled && percentage > 0) {
-	                        that.moveoutslide_up();
-	                    }
-	                    if (offsetToBody > scrolled && percentage > 0) {
-	                        that.moveintoslide();
-	                    }
-	                    if (offsetToBody < scrolled && percentage < 0) {
-	                        that.moveintoslide();
-	                    }
-	                    if (offsetToBody > scrolled && percentage < 0) {
-	                        that.moveoutslide_down();
-	                    }
-	                    if (offsetToBody === scrolled && percentage > 0) {
-	                        that.moveoutslide_up();
-	                    }
-	                    if (offsetToBody === scrolled && percentage < 0) {
-	                        that.moveoutslide_down();
-	                    }
-	                } else {
-	                    console.log('scrolled too little to trigger next step');
+	        if (Math.abs(percentage) >= dragThreshold) {
+
+
+	            //这种情况一般是多个连续的单页组件
+	            if (inScreenInfo.partup && inScreenInfo.partdown) {
+	                if (percentage < 0) {
+	                    that.moveoutslide_down(inScreenInfo.partdown);
+	                }
+	                if(percentage > 0){
+	                    that.moveoutslide_up(inScreenInfo.partup);
+
 	                }
 
-	            }else {
 
-	                if( that.touchInRangeBelow && percentage < 0 ){
-	                    that.moveintoslide();
+	            } else if (inScreenInfo.fit) {
+	                var elem = inScreenInfo.fit;
+	                if (percentage < 0) {
+	                    that.moveoutslide_down(elem, 'fit');
 	                }
-	                if(that.touchInRangeAbove && percentage > 0){
-	                    that.moveintoslide();
+
+	                if (percentage > 0) {
+	                    that.moveoutslide_up(elem, 'fit');
 	                }
+
+	            } else if (inScreenInfo.partup || inScreenInfo.partdown) {
+	                var elem = inScreenInfo.partup || inScreenInfo.partdown;
+	                if (percentage < 0) {
+	                    that.moveintoslide(elem);
+	                }
+
+	                if (percentage > 0) {
+	                    that.moveintoslide(elem);
+	                }
+
+	            } else { //单页组件不再可视区域
+
 	            }
 
-	            //重置percentage
-	            percentage = 0;
-	            that.touchInRange = null;
-	            that.touchInRangeAbove = null;
-	            that.touchInRangeBelow = null;
-	            that.touchInPage = null;
-	            console.log('touch end', that.$containerElem);
-
+	        } else {
+	            console.log('scrolled too little to trigger next step');
 	        }
+
+
+	        //重置percentage
+	        percentage = 0;
+	        that.touchInRange = null;
+	        that.touchInRangeAbove = null;
+	        that.touchInRangeBelow = null;
+	        that.touchInPage = null;
+	        console.log('touch end');
+
 	    },
-	    moveoutslide_up: function() {
+	    moveoutslide_up: function(elem, fit) {
 	        console.log('moveout slide up');
 	        var that = this;
-	        //that.$containerElem[0] 指的是当前被拖动的item  此时此item 顶部已有一部分被遮住
-	        var offsetToBody = that.offsetToBodyTop;
-	        // var offsetToBottom = getElementBottom(that.$containerElem[0]);
+	        var offsetToBody = getElementTop(elem);
 	        var scrolled = getScrolled();
-	        var scrollTo = offsetToBody + that.containerHeight; //滚动结束后应该停留的位置
-	        var maxScrolled = document.body.scrollHeight - WINDOW_HEIGHT; //最大可滚动距离
-	        animateEndScrollTo = Math.min(scrollTo, maxScrolled);
+	        var scrollTo = offsetToBody + WINDOW_HEIGHT;;
 
-	        // console.log(scrolled, scrollTo);
+
 	        Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * animationSpeed, that.animateType, function(value, end) {
 	            console.log('move out up');
 	            window.scrollTo(0, value.toFixed(3), end);
-	            if(end){
+	            if (end) {
 	                console.log('end true');
-	                that.$overlay.addClass('hide');
+	                // that.$overlay.addClass('hide');
 	            }
 	        });
-
-	        //使用transform改变
-	        // var winHeight = WINDOW_HEIGHT;
-	        // var translateY = winHeight - (scrolled - offsetToBody);
-	        // translateY = Math.min(translateY, (maxScrolled - scrolled));
-	        // var offsetToBottom = document.body.scrollHeight - (offsetToBody + winHeight);
-	        // translateY = Math.min(translateY, offsetToBottom);
-	        //
-	        //
-	        // $body.css({
-	        //     '-webkit-transform': 'translate3d(0, ' + (-translateY)  + 'px, 0)',
-	        //     // '-webkit-transition': 'all 700ms cubic-bezier(0.550, 0.085, 0.000, 0.990)',
-	        // });
-
-
-	        // console.log('move up end-------------', scrollTo);
-
 	    },
-	    moveintoslide: function() {
-	        var that = this;
-	        var scrolled = getScrolled();
-	        var scrollTo = that.offsetToBodyTop || 0;
-	        Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * animationSpeed, that.animateType, function(value, end) {
-	            console.log('move into ');
-	            window.scrollTo(0, value.toFixed(3));
-	            if(end){
-	                console.log('end true');
-
-	                that.$overlay.addClass('hide');
-	            }
-
-	        });
-	        // console.log('move into end-------------', scrollTo);
-	    },
-	    moveoutslide_down: function() {
+	    moveoutslide_down: function(elem) {
 	        console.log('moveout slide down');
 
 
 	        var that = this;
 	        var scrollTo = 0;
 	        var scrolled = getScrolled();
-	        var offsetToBody = that.offsetToBodyTop;
+	        var offsetToBody = getElementTop(elem);
 
 	        scrollTo = offsetToBody - that.containerHeight;
 	        // scrollTo = Math.min(scrollTo, offsetToBody);
-	        if (scrollTo < 0) scrollTo = 0;
-
+	        // if (scrollTo < 0) scrollTo = 0;
 	        Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * animationSpeed, that.animateType, function(value, end) {
 	            value = value.toFixed(3);
 	            console.log('moveslide down');
 	            window.scrollTo(0, value);
-	            if(end){
+	            if (end) {
 	                console.log('end true');
 	                // debugger
-	                that.$overlay.addClass('hide');
+	                // that.$overlay.addClass('hide');
 	            }
 	        });
 
@@ -410,10 +407,27 @@
 	        //     '-webkit-transform': 'translate3d(0, ' + (translateY)  + 'px, 0)',
 	        //     // '-webkit-transition': 'all 700ms cubic-bezier(0.550, 0.085, 0.000, 0.990)',
 	        // });
-
 	    },
 
+	    moveintoslide: function(elem) {
+	        var that = this;
+	        var scrolled = getScrolled();
+	        var scrollTo = getElementTop(elem) || 0;
+	        Math.animation(scrolled, scrollTo, Math.abs(scrolled - scrollTo) * animationSpeed, that.animateType, function(value, end) {
+	            console.log('move into ');
+	            window.scrollTo(0, value.toFixed(3));
+	            if (end) {
+	                console.log('end true');
+
+	                // that.$overlay.addClass('hide');
+	            }
+
+	        });
+	        // console.log('move into end-------------', scrollTo);
+	    },
 	    //在单页组件附近区域的滚动  同样显示单页组件
+	    //只要单页组件进入了可视区域
+
 	    touchStartBody: function(event) {
 	        console.log('touch start body');
 	        var that = this;
@@ -430,23 +444,23 @@
 	        var offsetToBody = that.offsetToBodyTop;
 	        var offsetToBodyWithHeight = offsetToBody + that.containerHeight;
 
+	        //单页组件 已经进入到可视区域
+
 	        //这样太麻烦
-
-
-	        if ((offsetToBody - dragStartBody) > 0 && Math.abs(offsetToBody - dragStartBody) < dragStartBodyThrehold) {
-	            //在单页组件附近的上方滑动
-	            this.touchInRange = true;
-	            this.touchInRangeAbove = true;
-	            console.log('touch in range above');
-	            // event.preventDefault();
-	        } else if ((dragStartBody - offsetToBodyWithHeight) > 0 && Math.abs(dragStartBody - offsetToBodyWithHeight) < dragStartBodyThrehold) {
-	            //在单页组件附近的下方滑动
-	            this.touchInRange = true;
-	            this.touchInRangeBelow = true;
-	            console.log('touch in range below');
-	            // event.preventDefault();
-	        }
-	        startScrolled = getScrolled();
+	        // if ((offsetToBody - dragStartBody) > 0 && Math.abs(offsetToBody - dragStartBody) < dragStartBodyThrehold) {
+	        //     //在单页组件附近的上方滑动
+	        //     this.touchInRange = true;
+	        //     this.touchInRangeAbove = true;
+	        //     console.log('touch in range above');
+	        //     // event.preventDefault();
+	        // } else if ((dragStartBody - offsetToBodyWithHeight) > 0 && Math.abs(dragStartBody - offsetToBodyWithHeight) < dragStartBodyThrehold) {
+	        //     //在单页组件附近的下方滑动
+	        //     this.touchInRange = true;
+	        //     this.touchInRangeBelow = true;
+	        //     console.log('touch in range below');
+	        //     // event.preventDefault();
+	        // }
+	        // startScrolled = getScrolled();
 	        // event.stopPropagation();
 
 	    },
@@ -465,25 +479,24 @@
 	            e.preventDefault();
 	        });
 
-	        this.$item.on({
-	            'touchstart': that.touchStart.bind(that),
-	            'touchmove': that.touchMove.bind(that),
-	            'touchend': that.touchEnd.bind(that),
-	            'touchcancel': that.touchEnd.bind(that),
-	        });
-	        // if (!$body.attr('single-page-event')) {
-	        //     $body.attr('single-page-event', 'bind');
-	        $('.content').on({
-	            'touchstart': that.touchStartBody.bind(that),
-	            'touchmove': that.touchMove.bind(that),
-	            'touchend': that.touchEnd.bind(that),
-	            'touchcancel': that.touchEnd.bind(that),
-	            'transitionend': that.bodyTransitionEnd.bind(that),
-	        });
-	        // }
+	        // this.$item.on({
+	        //     'touchstart': that.touchStart.bind(that),
+	        //     'touchmove': that.touchMove.bind(that),
+	        //     'touchend': that.touchEnd.bind(that),
+	        //     'touchcancel': that.touchEnd.bind(that),
+	        // });
+	        if (!$body.attr('single-page-event')) {
+	            $body.attr('single-page-event', 'bind');
+	            $('.content').on({
+	                'touchstart': that.touchStartBody.bind(that),
+	                'touchmove': that.touchMove.bind(that),
+	                'touchend': that.touchEnd.bind(that),
+	                'touchcancel': that.touchEnd.bind(that),
+	                'transitionend': that.bodyTransitionEnd.bind(that),
+	            });
+	        }
 	    }
 	};
-
 
 /***/ },
 /* 2 */
